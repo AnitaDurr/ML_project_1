@@ -7,10 +7,17 @@ def least_squares SGD(y, tx, initial w, max iters, gamma):
 	None
 
 def least_squares(y, tx):
-	None
+    """Least squares solution implemented for ex03 (Massimo)."""
+    return(np.linalg.inv(tx.T @ tx) @ tx.T @ y)
 
 def ridge_regression(y, tx, lambda_):
-	None
+    """Ridge regression implemented for ex03 (Massimo)."""
+    try:
+        m,n = np.shape(tx)
+        I = np.identity((n))
+    except:
+        I = np.identity((1))
+    return(np.linalg.inv(tx.T @ tx + lambda_ * I) @ tx.T @ y)
 
 def logistic_regression(y, tx, initial w, max iters, gamma):
 	None
