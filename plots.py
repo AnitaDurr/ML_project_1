@@ -20,8 +20,20 @@ with open(DATA_TRAIN_PATH, 'r') as f:
     feat_names = d_reader.fieldnames[2:]
 
 
+mask_pos = (y == 1)
+
 for i in range(len(feat_names)):
-    plt.plot(tX[:, i], y, '.')
-    plt.xlabel(feat_names[i])
-    plt.ylabel('label')
-    plt.show()
+    for j in range(i + 1, len(feat_names)):
+        u = tX[:, i][mask_pos]
+        v = tX[:, j][mask_pos]
+        plt.plot(u, v, 'r.')
+        
+        u = tX[:, i][~mask_pos]
+        v = tX[:, j][~mask_pos]
+        plt.plot(u, v, 'b.')
+        
+        plt.xlabel(feat_names[i])
+        plt.ylabel(feat_names[j])
+        plt.show()
+    
+    
