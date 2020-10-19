@@ -105,7 +105,7 @@ def calculate_hessian(y, tx, w):
     """return the Hessian of the loss function."""
     S = sigmoid(np.dot(tx, w))
     hessian = tx.T.dot(S*tx)
-    return(hessian) 
+    return(hessian)
 
 def log_learning_by_gradient_descent(y, tx, w, gamma):
     """
@@ -129,7 +129,7 @@ def log_learning_by_newton_method(y, tx, w, gamma):
     w = w - gamma * (np.linalg.inv(hess).dot(grad))
     return loss, w
 
-def logistic_regression(y, tx, initial_w, max_iter=100, gamma=1., threshold=1e-8, lambda_=0.1, newton_method = False):
+def logistic_regression(y, x, max_iter=100, gamma=1., threshold=1e-8, lambda_=0.1, newton_method = False):
     # intiate losses
     losses = []
 
@@ -144,7 +144,7 @@ def logistic_regression(y, tx, initial_w, max_iter=100, gamma=1., threshold=1e-8
             loss, w = log_learning_by_newton_method(y, tx, w, gamma)
         else:
             loss, w = log_learning_by_gradient_descent(y, tx, w, gamma)
-            
+
         # log info
         if iter % 1 == 0:
             print("Current iteration={i}, the loss={l}".format(i=iter, l=loss))
