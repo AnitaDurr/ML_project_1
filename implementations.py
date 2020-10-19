@@ -50,11 +50,10 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 
         # do the gradient step
         w = w - gamma * grad
-        print(w)
+    
     # compute final loss
     loss = compute_mse(y, tx, w)
-    
-    
+
     return w, loss
 
 
