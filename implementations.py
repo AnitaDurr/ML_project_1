@@ -72,14 +72,31 @@ def least_squares_SGD(y, tX, initial_w, max_iters, gamma):
 
 	return w, loss
 
+def least_squares(y, tx):
+    rank = np.linalg.matrix_rank(tx)
+    xtx = np.dot(tx.transpose(), tx)
 
-def least_squares(y, tX):
-	None
+    #check if a solution exists
+    if(rank != xtx.shape[0]):
+        print("rank defficient")
+        return
 
-def ridge_regression(y, tX, lambda_):
-	None
+    w = np.linalg.solve(xtx, np.dot(tx.transpose(), y))
 
-####################################################################################################################################
+    loss = compute_mse(y, tx, w)
+    return w, loss
+
+def ridge_regression(y, tx, lambda_):
+    a = np.dot(tx.transpose(), tx)
+    lambda_p = 2 * len(y) * lambda_
+    a = a + np.dot(lambda_p, np.eye(len(y)))
+    b = np.dot(tx.transpose(), y)
+
+    w = np.linalg.solve(a,b)
+    loss = compute_rmse(x, y, w)
+
+    return w, loss
+
 # Logistic regressions (Massimo)
 
 def sigmoid(t):
