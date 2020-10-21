@@ -28,6 +28,9 @@ def load_test_data(file):
     X = np.genfromtxt(file, delimiter=",", skip_header=1, usecols=[i for i in range(2,32)])
     return(X)
 
+def sigmoid(t):
+    return 1.0 /(1 + np.exp(-t)
+
 def calculate_prediction_log(tx, w):
     predictions = []
     for i in range(tx.shape[0]):
