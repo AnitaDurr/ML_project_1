@@ -31,7 +31,7 @@ def load_test_data(file):
 def calculate_prediction_log(tx, w):
     predictions = []
     for i in range(tx.shape[0]):
-        if tx[i,].dot(w) > 0.5:
+        if sigmoid(tx[i,].dot(w)) > 0.5:
             predictions.append(1)
         else:
             predictions.append(0)
