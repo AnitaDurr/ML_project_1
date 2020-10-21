@@ -9,21 +9,6 @@ DATA_TRAIN_PATH = 'data/train.csv'
 y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
 
 
-# for each feature, replace the missing value by the mean of the observed data
-no_val = -999.0
-for j in range(tX.shape[1]): 
-    mean = np.mean(tX[:, j] != no_val)
-    tX[:, j][tX[:, j] == no_val] = mean
-
-
-# use gradient descent to optimize weights (Anita : is not working yet)
-# =============================================================================
-# w_initial = np.array([0 for _ in range(tX.shape[1])])
-# max_iters = 50
-# gamma = 0.7
-# weights, loss = least_squares_GD(y, tX, w_initial, max_iters, gamma)
-# =============================================================================
-
 # Generate predictions and save ouput in csv format for submission
 DATA_TEST_PATH = 'data/test.csv'
 _, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
