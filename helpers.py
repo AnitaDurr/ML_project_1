@@ -1,5 +1,9 @@
 import numpy as np
 
+# Random numbers to seed numpy seeds for cross validation np.random.choice() function
+
+899673
+
 # 1. Data handling functions
 def load_train_data(file):
     X = np.genfromtxt(file, delimiter=",", skip_header=1, usecols=[i for i in range(2,32)])
@@ -18,8 +22,8 @@ def cross_validation_data(y, x, seed, cv_proportion):
     np.random.seed(seed)
     num_observations = y.shape[0]
     random_cv_indices = np.random.choice(num_observations, int(cv_proportion*num_observations),replace=False)
-    y_train = y[[i for i in range(num_observations) if i in random_cv_indices]]
-    x_train = x[[i for i in range(num_observations) if i in random_cv_indices]]
+    y_train = y[random_cv_indices]
+    x_train = x[random_cv_indices]
     y_test = y[[i for i in range(num_observations) if i not in random_cv_indices]]
     x_test = x[[i for i in range(num_observations) if i not in random_cv_indices]]
     return y_train, x_train, y_test, x_test
@@ -31,10 +35,10 @@ def load_test_data(file):
 def sigmoid(t):
     return 1.0 /(1 + np.exp(-t))
 
-def calculate_prediction_log(tx, w):
+def calculate_prediction(tx, w):
     predictions = []
     for i in range(tx.shape[0]):
-        if sigmoid(tx[i,].dot(w)) > 0.5:
+        if tx[i,].dot(w) > 0.5:
             predictions.append(1)
         else:
             predictions.append(0)
@@ -48,11 +52,21 @@ def test_weights(y, x, w, model):
     if model == 'logistic':
         predictions = calculate_prediction_log(tx, w)
     # to create prediction functions for other methods
-
-    true_positives = np.sum([1 if predictions[i] == 1 and y[i] == 1 else 0 for i in range(len(y))])
-    false_positives = np.sum([1 if predictions[i] == 1 and y[i] == 0 else 0 for i in range(len(y))])
-    true_negatives = np.sum([1 if predictions[i] == 0 and y[i] == 0 else 0 for i in range(len(y))])
-    false_negatives = np.sum([1 if predictions[i] == 0 and y[i] == 1 else 0 for i in range(len(y))])
+    
+    # Calculate the number of true/false positives/negatives to then compute classification accuracy metrics
+    true_positives = 0
+    false_positives = 0
+    true_negatives = 0
+    false_negatives = 0
+    for i in range(len(y)):
+        if predictions[i] == 1 and y[i] == 1:
+            true_positives += 1
+        elif predictions[i] == 1 and y[i] == 0:
+            false_positives += 1
+        elif predictions[i] == 0 and y[i] == 0:
+            true_negatives += 1
+        else:
+            false_negatives += 1
 
     accuracy = (true_positives + true_negatives) / (true_positives + false_positives + true_negatives + false_negatives)
     precision = true_positives / (true_positives + false_positives)
@@ -62,4 +76,4 @@ def test_weights(y, x, w, model):
     print("  - Test precision={p}                       ".format(p=precision))
     print("  - Test recall={r}                       ".format(r=recall))
     print("  - Test F1 score={f}                       ".format(f=f1_score))
-    return(loss)
+    return([loss, accuracy, f1_score])
