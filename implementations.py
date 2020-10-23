@@ -80,95 +80,56 @@ def least_squares(y, tx):
     if(rank != xtx.shape[0]):
         print("rank defficient")
         return
-
+    #form and solve the normal equations
     w = np.linalg.solve(xtx, np.dot(tx.transpose(), y))
 
+    #compute the MSE
     loss = compute_mse(y, tx, w)
     return w, loss
 
 def ridge_regression(y, tx, lambda_):
+   
+    #form and solve the equations
     a = np.dot(tx.transpose(), tx)
     lambda_p = 2 * len(y) * lambda_
     a = a + np.dot(lambda_p, np.eye(len(y)))
     b = np.dot(tx.transpose(), y)
-
     w = np.linalg.solve(a,b)
+
+    #compute the RMSE
     loss = compute_rmse(x, y, w)
 
     return w, loss
 
 # Logistic regressions (Massimo)
-
 def sigmoid(t):
-	"""apply the sigmoid function on t."""
-	sig_t = np.exp(t) / (1 + np.exp(t))
-	return(sig_t)
+    """Applies the sigmoid function, version from the exercise corrections
+    (not the one from the course)"""
+    return 1.0 / (1 + np.exp(-t))
 
-def calculate_neg_log_l_loss(y, tX, w):
-	"""compute the loss: negative log likelihood."""
-	loss = np.mean(np.log(1 + np.exp(tX.dot(w))) - (y * tX.dot(w)))
-	return(loss)
+def log_gradient(y, tx, w):
+    """Calculates gradient for sigmoid gradient descent"""
+    pred = sigmoid(tx.dot(w))
+    grad = tx.T.dot(pred - y)
+    return grad
 
-def calculate_log_gradient(y, tX, w):
-	"""compute the gradient of loss."""
-	gradient = tX.T.dot(sigmoid(np.dot(tX, w)) - y)
-	return(gradient)
+def compute_log_loss(y, tx, w):
+    """Negative log likelihood"""
+    pred = sigmoid(tx.dot(w))
+    loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
+    return np.squeeze(- loss)
 
-def calculate_hessian(y, tX, w):
-	"""return the Hessian of the loss function."""
-	S = sigmoid(np.dot(tX, w))
-	hessian = tX.T.dot(S*tX)
-	return(hessian)
+def logistic_regression_GD(y, x, initial_w, max_iters=1000, gamma=0.01):
+    # build tx, initial weights
+    tx = np.c_[np.ones((y.shape[0], 1)), x]
+    w = np.zeros((tx.shape[1], 1)) + initial_w
 
-def log_learning_by_gradient_descent(y, tX, w, gamma):
-	"""
-	Do one step of gradient descent using logistic regression.
-	Return the loss and the updated w.
-	"""
-	loss = calculate_neg_log_l_loss(y, tX, w)
-	grad = calculate_log_gradient(y,tX,w)
-	# update w
-	w = w - (gamma * grad)
-	return loss, w
+    for iter in range(max_iters):
+        print('Iteration: {i}'.format(i=iter),end='\r')
+        # compute the gradient and update w
+        grad = log_gradient(y, tx, w)
+        w = w - gamma * grad
 
-def log_learning_by_newton_method(y, tX, w, gamma):
-	"""
-	Do one step on Newton's method.
-	return the loss and updated w.
-	"""
-	loss = calculate_neg_log_l_loss(y, tX, w)
-	grad = calculate_log_gradient(y, tX, w)
-	hess = calculate_hessian(y, tX, w)
-	w = w - gamma * (np.linalg.inv(hess).dot(grad))
-	return loss, w
-
-def logistic_regression(y, x, max_iter=100, gamma=1., threshold=1e-8, lambda_=0.1, newton_method = False):
-	# intiate losses
-	losses = []
-
-	# build tX
-	tX = np.c_[np.ones((y.shape[0], 1)), x]
-	w = np.zeros((tX.shape[1], 1))
-
-	# start the logistic regression
-	for iter in range(max_iter):
-		# get loss and update w.
-		if newton_method == True:
-			loss, w = log_learning_by_newton_method(y, tX, w, gamma)
-		else:
-			loss, w = log_learning_by_gradient_descent(y, tX, w, gamma)
-
-		# log info
-		if iter % 1 == 0:
-			print("Current iteration={i}, the loss={l}".format(i=iter, l=loss))
-		# converge criterion
-		losses.append(loss)
-		if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
-			break
-	# visualization
-	visualization(y, x, mean_x, std_x, w, "classification_by_logistic_regression_newton_method",True)
-	print("loss={l}".format(l=calculate_loss(y, tX, w)))
-
-
-def reg_logistic_regression(y, tX, lambda_, initial_w, max_iters, gamma):
-	None
+    # Calculate final loss
+    loss = compute_log_loss(y, tx, w)
+    return w, loss

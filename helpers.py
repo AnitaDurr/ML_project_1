@@ -1,11 +1,49 @@
 import numpy as np
 
-# 1. Data handling functions
-def load_train_data(file):
-    X = np.genfromtxt(file, delimiter=",", skip_header=1, usecols=[i for i in range(2,32)])
-    y = np.genfromtxt(file, delimiter=",", skip_header=1, usecols=[1], dtype = None, converters={1: lambda x: 0 if b's' in x else 1})
-    y = np.expand_dims(y, axis=1)
-    return X, y
+# Random numbers to seed numpy seeds for cross validation np.random.choice() function, generated with: https://www.calculator.net/random-number-generator.html?slower=1000&supper=9999&ctype=1&s=1764&submit1=Generate
+iteration_seeds = [8046,9412,1468,6485,4893,3970,8471,5791,9318,7038]
+gammas_to_test = np.logspace(-8,1,num=50)
+lambdas_to_test = np.arange(0, 200, 2)
+n_batch_to_test = np.arange(0,100,2)
+
+import numpy as np
+import csv
+
+# Logistic regressions (Massimo)
+
+# 1. Data handling functions
+def load_csv_data(data_path, sub_sample=False):
+    """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
+    y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
+    x = np.genfromtxt(data_path, delimiter=",", skip_header=1)
+    ids = x[:, 0].astype(np.int)
+    input_data = x[:, 2:]
+
+    # convert class labels from strings to binary (0,1)
+    yb = np.ones(len(y))
+    yb[np.where(y=='b')] = 0
+
+    # sub-sample
+    if sub_sample:
+        yb = yb[::50]
+        input_data = input_data[::50]
+        ids = ids[::50]
+
+    return yb, input_data, ids
+
+def pearson(X, Y):
+    return np.cov(X, Y)[0, 1] / (np.std(X) * np.std(Y))
+
+def load_clean_data(file):
+    y, X, ids = load_csv_data(file, sub_sample=False)
+
+    ### missing handling data : replace by mean of the observed data
+    no_val = -999.0
+    for j in range(X.shape[1]):
+        mean = np.mean(X[:, j] != no_val)
+        X[:, j][X[:, j] == no_val] = mean
+
+    return y, X, ids
 
 def standardize(x):
     mean_x = np.mean(x, axis=0)
@@ -25,24 +63,18 @@ def cross_validation_data(y, x, seed, cv_proportion):
     x_test = x[~random_cv_indices]
     return y_train, x_train, y_test, x_test
 
-def load_test_data(file):
-    X = np.genfromtxt(file, delimiter=",", skip_header=1, usecols=[i for i in range(2,32)])
-    return(X)
-
-def sigmoid(t):
-    return 1.0 /(1 + np.exp(-t))
-
-def calculate_prediction_log(tx, w):
+def calculate_predictions(tx, w):
     predictions = []
     for i in range(tx.shape[0]):
         if sigmoid(tx[i,].dot(w)) > 0.5:
             predictions.append(1)
         else:
-            predictions.append(0)
+            predictions.append(-1)
     return np.array(predictions)
 
-def test_weights(y, x, w, model):
+def test_weights(y, x, w):
     tx = np.c_[np.ones((y.shape[0], 1)), x]
+
     loss = calculate_loss(y, tx, w)
     print("  - Test loss={l}                           ".format(l=loss))
 
@@ -82,9 +114,8 @@ def test_weights(y, x, w, model):
     recall = true_positives / (true_positives + false_negatives)
     f1_score = 2 * ((precision * recall) / (precision + recall))
 
-    print("  - Test accuracy={a}                       ".format(a=accuracy))
-    print("  - Test precision={p}                       ".format(p=precision))
-    print("  - Test recall={r}                       ".format(r=recall))
-    print("  - Test F1 score={f}                       ".format(f=f1_score))
-
-    return(loss)
+    print("  - accuracy={a}                       ".format(a=accuracy))
+    print("  - precision={p}                       ".format(p=precision))
+    print("  - recall={r}                       ".format(r=recall))
+    print("  - F1 score={f}                       ".format(f=f1_score))
+    return([loss, accuracy, precision, recall, f1_score])
