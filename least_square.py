@@ -5,14 +5,14 @@ from data_process import *
 from implementations import *
 from helpers import *
 
-
-y, tX, ids = load_clean_data()
+y, tX, ids = load_clean_data(DATA_TRAIN_PATH)
 
 ### grid search for hyperparameters gamma and initial_w
 
 max_iters = 50
 gammas = np.logspace(-10, -4)
-initial_ws = np.array([np.random.rand(tX.shape[1]) * n for n in np.logspace(-3, 3)])
+# ws_initial = np.array([np.random.rand(tX.shape[1]) * n for n in np.logspace(-3, 3)])
+ws_initial = [np.zeros(tX.shape[1])]
 losses = np.full((len(gammas), len(initial_ws)), -1)
 
 for i in range(len(gammas)):
@@ -23,8 +23,8 @@ for i in range(len(gammas)):
 		if loss != np.inf:
 			losses[i, j] = loss
 
-### heatmap
 
+### heatmap
 
 fig, ax = plt.subplots()
 im = ax.imshow(losses)

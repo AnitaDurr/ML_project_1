@@ -3,7 +3,6 @@ import numpy as np
 
 ### cost functions
 
-
 def compute_mse(y, tX, w):
 	"""
 	Compute the mse loss.
@@ -35,7 +34,6 @@ def compute_gradient(y, tX, w):
 
 ### ML methods
 
-
 def least_squares_GD(y, tX, initial_w, max_iters, gamma):
 	"""
 	Linear regression (mse) using gradient descent.
@@ -52,7 +50,6 @@ def least_squares_GD(y, tX, initial_w, max_iters, gamma):
 	loss = compute_mse(y, tX, w)
 
 	return w, loss
-
 
 def least_squares_SGD(y, tX, initial_w, max_iters, gamma):
 	"""
@@ -80,6 +77,7 @@ def least_squares(y, tx):
     if(rank != xtx.shape[0]):
         print("rank defficient")
         return
+
     #form and solve the normal equations
     w = np.linalg.solve(xtx, np.dot(tx.transpose(), y))
 
@@ -88,7 +86,6 @@ def least_squares(y, tx):
     return w, loss
 
 def ridge_regression(y, tx, lambda_):
-   
     #form and solve the equations
     a = np.dot(tx.transpose(), tx)
     lambda_p = 2 * len(y) * lambda_
@@ -101,7 +98,6 @@ def ridge_regression(y, tx, lambda_):
 
     return w, loss
 
-# Logistic regressions (Massimo)
 def sigmoid(t):
     """Applies the sigmoid function, version from the exercise corrections
     (not the one from the course)"""
