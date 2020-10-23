@@ -80,19 +80,23 @@ def least_squares(y, tx):
     if(rank != xtx.shape[0]):
         print("rank defficient")
         return
-
+    #form and solve the normal equations
     w = np.linalg.solve(xtx, np.dot(tx.transpose(), y))
 
+    #compute the MSE
     loss = compute_mse(y, tx, w)
     return w, loss
 
 def ridge_regression(y, tx, lambda_):
+   
+    #form and solve the equations
     a = np.dot(tx.transpose(), tx)
     lambda_p = 2 * len(y) * lambda_
     a = a + np.dot(lambda_p, np.eye(len(y)))
     b = np.dot(tx.transpose(), y)
-
     w = np.linalg.solve(a,b)
+
+    #compute the RMSE
     loss = compute_rmse(x, y, w)
 
     return w, loss
