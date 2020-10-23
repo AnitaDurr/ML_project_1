@@ -7,6 +7,13 @@ DATA_TRAIN_PATH = 'data/train.csv'
 def pearson(X, Y):
 		return np.cov(X, Y)[0, 1] / (np.std(X) * np.std(Y))
 
+def standardize(x):
+    mean_x = np.mean(x, axis=0)
+    x = x - mean_x
+    std_x = np.std(x, axis=0)
+    x = x / std_x
+    return x
+
 def load_clean_data():
 	y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
 
@@ -15,6 +22,10 @@ def load_clean_data():
 	for j in range(tX.shape[1]):
 		mean = np.mean(tX[:, j] != no_val)
 		tX[:, j][tX[:, j] == no_val] = mean
+
+
+	### normalize data
+	tX = standardize(tX)
 
 
 	### remove features uncorrelated to labels

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from proj1_helpers import *
 from data_process import *
 from implementations import *
+from helpers import *
 
 
 y, tX, ids = load_clean_data()
