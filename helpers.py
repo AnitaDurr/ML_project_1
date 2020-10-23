@@ -4,7 +4,6 @@ import numpy as np
 iteration_seeds = [8046,9412,1468,6485,4893,3970,8471,5791,9318,7038]
 gammas_to_test = np.logspace(-8,1,num=50)
 lambdas_to_test = np.arange(0, 200, 2)
-n_batch_to_test = np.arange(0,100,2)
 
 import numpy as np
 import csv
