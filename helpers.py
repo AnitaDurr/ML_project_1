@@ -8,8 +8,6 @@ lambdas_to_test = np.arange(0, 200, 2)
 import numpy as np
 import csv
 
-# Logistic regressions (Massimo)
-
 # 1. Data handling functions
 def load_csv_data(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
