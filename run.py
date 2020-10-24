@@ -2,12 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from implementations import *
-from proj1_helpers import *
+from helpers import *
 
 # load training data into class labels, feature matrix and event ids
 DATA_TRAIN_PATH = 'data/train.csv'
-y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
+y, tX, ids = load_clean_data(DATA_TRAIN_PATH)
 
+from compare_method import * 		# this will execute the compare_method script
+
+# best_method and best_args should have been selected in compare_method script
+
+weights = best_method(y, tX, best_args)
 
 # Generate predictions and save ouput in csv format for submission
 DATA_TEST_PATH = 'data/test.csv'

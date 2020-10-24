@@ -60,10 +60,6 @@ def load_clean_data(file):
             if features_correlation[i,j] > 0.9 and i != j and [j,i] not in correlated_feature_couples:
                 correlated_feature_couples.append([i,j])
 
-    #sns.heatmap(features_correlation)
-    #plt.title('Pearson correlation for train.csv features')
-    #plt.savefig('Features_correlation.pdf')
-
     # iterates over the highly correlated couples and for each finds the feature the less correlated with the label
     features_to_remove = []
     for feature_couple in correlated_feature_couples:
@@ -76,6 +72,38 @@ def load_clean_data(file):
 
     # remove the features in the highly correlated couples that correlated the less with the label
     X = np.delete(X, list(set(features_to_remove)), axis=1)
-    tX = np.c_[np.ones((y.shape[0], 1)), X]
+    # tX = np.c_[np.ones((y.shape[0], 1)), X]
 
-    return y, tX, ids
+    return y, X, ids
+
+def create_csv_submission(ids, y_pred, name):
+    """
+    Creates an output file in csv format for submission to kaggle
+    Arguments: ids (event ids associated with each prediction)
+               y_pred (predicted class labels)
+               name (string name of .csv output file to be created)
+    """
+    with open(name, 'w') as csvfile:
+        fieldnames = ['Id', 'Prediction']
+        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
+        writer.writeheader()
+        for r1, r2 in zip(ids, y_pred):
+            writer.writerow({'Id':int(r1),'Prediction':int(r2)})
+
+
+def calculate_predictions_log(tx, w):
+    predictions = []
+    for i in range(tx.shape[0]):
+        pred = sigmoid(tx[i,].dot(w))
+        predictions.append(int(pred > 0.5))
+    return np.array(predictions)
+
+def predict_labels(weights, data):
+    """
+    Generates class predictions given weights, and a test data matrix
+    """
+    y_pred = np.dot(data, weights)
+    y_pred[np.where(y_pred <= 0.5)] = 0
+    y_pred[np.where(y_pred > 0.5)] = 1
+
+    return y_pred

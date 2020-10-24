@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from implementations import *
-from data_load_clean_selection import *
+from helpers import *
 from tune_hyperparam import *
 
 def compute_criterions(y, x, weights, predict, verbose=True):

@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from implementations import *
 from cross_validation import *
-from data_load_clean_selection import *
+from helpers import *
 import time
 
 
@@ -60,7 +60,7 @@ k_fold = 5
 seed = 7
 
 ### LEAST SQUARE GD AND SGD
-gammas = np.logspace(-10, -1, num=50)
+gammas = np.logspace(-10, -1, num=20)
 w_initial = np.zeros(x.shape[1])
 max_iters = 1000
 
@@ -84,7 +84,7 @@ lsSGD_args = [w_initial, max_iters, best_SGD_gamma]
 # plot
 cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
 
-### LEAST SQUARE NORMAL EQUATION AND RIDGE REGRESSSION
+### LEAST SQUARE AND RIDGE REGRESSSION
 
 lambdas = np.arange(0, 10, 0.1)
 
