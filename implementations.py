@@ -98,34 +98,46 @@ def ridge_regression(y, tx, lambda_):
 
     return w, loss
 
+# Logisitc regressions:
 def sigmoid(t):
-    """Applies the sigmoid function, version from the exercise corrections
-    (not the one from the course)"""
+    """Applies the sigmoid function"""
     return 1.0 / (1 + np.exp(-t))
 
-def log_gradient(y, tx, w):
-    """Calculates gradient for sigmoid gradient descent"""
-    pred = sigmoid(tx.dot(w))
-    grad = tx.T.dot(pred - y)
-    return grad
-
-def compute_log_loss(y, tx, w):
-    """Negative log likelihood"""
+def neg_log_likelihood(y, tx, w):
+    """compute the loss: negative log likelihood."""
     pred = sigmoid(tx.dot(w))
     loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
     return np.squeeze(- loss)
 
-def logistic_regression_GD(y, x, initial_w, max_iters=1000, gamma=0.01):
-    # build tx, initial weights
-    tx = np.c_[np.ones((y.shape[0], 1)), x]
-    w = np.zeros((tx.shape[1], 1)) + initial_w
+def logistic_regression(y, tx, initial_w, max_iters=1000, gamma=0.01):
+	w = initial_w
 
     for iter in range(max_iters):
         print('Iteration: {i}'.format(i=iter),end='\r')
+        
         # compute the gradient and update w
-        grad = log_gradient(y, tx, w)
+        pred = sigmoid(tx.dot(w))
+        grad = tx.T.dot(pred - y)
         w = w - gamma * grad
 
     # Calculate final loss
-    loss = compute_log_loss(y, tx, w)
+    pred = sigmoid(tx.dot(w))
+    loss = neg_log_likelihood(y, tx, w)
     return w, loss
+
+def reg_logistic_regression(y, tx, initial_w, lambda_ = 1, max_iters=1000, gamma=0.01):
+    w = initial_w
+
+    for iter in range(max_iters):
+        print('Iteration: {i}'.format(i=iter),end='\r')
+        
+        # compute the gradient, add penalty term and update w
+        pred = sigmoid(tx.dot(w))
+        grad = tx.T.dot(pred - y) + (2 * lambda_ * w)
+        w = w - gamma * grad
+
+    # Calculate final loss, add penalty term
+    pred = sigmoid(tx.dot(w))
+    loss = neg_log_likelihood(y, tx, w) + (lambda_ * np.squeeze(w.T.dot(w)))
+    return w, loss
+
