@@ -2,28 +2,82 @@
 
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{hhline}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[utf8x]{inputenc}
+
+\renewcommand{\arraystretch}{2}
+
 
 \begin{document}
 	\title{Machine Learning Project $1$}
 	
-	\author{Massimo \and Anita D\" urr \and Natasa Kr\v co}
+	\author{Massimo Bourquin \and Anita D\" urr \and Natasa Kr\v co}
 	
 	\maketitle
 	
 	\section{Introduction}
-	This report is written as part of the first group project in the Machine Learning course, during the first semester of the 2020/2021 academic year. In this project, we have implemented
-	Description of data, goal of the project
 	
-	\section{Data Preprocessing}
-	Cleaning, outliers, etc
+	Classification is a common problem in Machine Learning. It can be either supervised, where the aim is to highlight the difference between groups by showing how well they can be separated (e.g. random forests, logistic regressions, etc.), or unsupervised, where the aim is to create data-driven groups in the data, i.e. clusters.
 	
-	\section{Implementation}
-	Description of methods
+	In this paper, we will give a few possible solutions to the problem of detecting the Higgs boson. We used a CERN Higgs Boson dataset, with 250000 training data points, and the same amount of test data points, where each data point has 30 features. Because the problem is concerned with detecting the Higgs Boson, the label has two possible values - “s”, when a Higgs Boson has been detected (signal), and “b”, otherwise (“background”). In our implementation, we have replaces the “s” and “b” values with 1 and 0, respectively.
+	Here we aim to test different Machine Learning methods on the train dataset, in order to predict the labels for the test dataset.
 	
-	\section{Optimization}
-	Description of evaluation functions
 	
-	Parameter optimization
+	\section{Methods}
+	For this project, we will assess the accuracy of 6 different Machine Learning methods, namely Least squares using gradient descent, Least squares using stochastic gradient descent, Least squares using normal equation, Ridge regression using normal equations, Logistic regression using stochastic gradient descent and Penalised logistic regression using stochastic gradient descent (table 1). The aim is to develop the best predictor using the training dataset and to then apply the method to the test dataset.
+	In order to optimize the methods, we first did some data processing, and then focused on the actual methods, that is, tried to find the best values for the hyperparameters in order to get as precise a model as possible. After finding the best hyperparameter value for each method, we compared the methods and chose the best one, which we used to predict the labels for the test data.
 	
-	Conclusion - which was the best?
+%	$
+	%\begin{array}{|c|c|c|}
+	%	\textbf{Method} & \textbf{Optimisation algorithms} & \textbf{Hyperparameters to optimise} \\
+	%	\hline
+	%	\text{Least squares} &	\text{Gradient descent} &	\text{Step size (gamma)} \\ \text{Try values in range [10^-10, 10^-1]}
+	%\end{array}
+	%$
+	
+	$$
+	\begin{array}{|c|c|c|}
+	\hline
+	\textbf{Method} & \textbf{Optimisation algorithms} & \textbf{Hyperparameters} \\
+	\hline
+	\text{Least squares} & \text{Gradient descent} & \text{Step size (gamma)} \\
+	\hline
+	\text{Least squares} & \text{Stochastic gradient descent} &\text{Step size (gamma)} \\
+	\hline
+	\text{Least squares} & \text{Normal equations} & \text{No hyperparameter} \\
+	\hline
+	\text{Ridge regression} & \text{Normal equations} & \text{Penalisation parameter (lambda)} \\
+	\hline
+	\text{Logistic regression} & \text{Gradient descent} & \text{Step size (gamma)} \\
+	\hline
+	\text{Penalised logistic regression} & \text{Gradient descent} & \text{Step size and penalisation parameter} \\
+	\hline
+	\end{array}
+	$$
+	
+	\subsection{Data Cleaning and Feature Selection}
+	The data cleaning consisted of replacing missing values ($-999$) by the feature mean.
+	\\
+	We used a correlation-based feature selection. For this, Pearson’s correlation between the features, and of the features with the label was computed. For all pairs of features having a high correlation ($> 0.9$), we removed the one having the lowest correlation with the prediction (label).
+	
+	\subsection{Grid-search hyperparameter optimisation}
+	In this project, we decided to focus on optimizing the gamma and lambda hyperparameters. As for initial weights and maximum number of iterations, we decided to use fixed values for those: \begin{itemize}
+		\item Initial weights: $0$
+		\item Maximum iterations: $1000$
+	\end{itemize}
+
+	We searched for the best values using grid search for every hyperparameter. For lambda, we tested 20 integers as the value, while for gamma, we considered $20$ floats in log space, in the range $ [ 10^{-10}, 10^{-1}]$. Each method was then tested on this grid space using a $5$-fold cross validation. The loss was averaged between the trials and the best parameter (for $1$-parameter optimisation) or the best combination of parameters (for $2$-parameters penalised logistic regression optimisation) was kept. The results were visualised using either line plots comparing loss to the hyperparameter ($1$-parameter optimisation) or heatmaps ($2$-parameter optimisation), with the mean loss on the $Z$ axis.
+	
+	
+	
+	\section{Results}
+	After finding the best hyperparameter values for each method, we evaluated each method by computing accuracy, precision, recall and f1-score. We calculated these criterions using 4-fold cross-validation. To choose the best model, we used a boxplot the results of the evaluation.
+	
+	Here, the best model was shown to be MODEL, with hyperparameter values VALUES.
+	
+	WHY
 \end{document}
