@@ -19,6 +19,7 @@ def compute_criterions(y, x, weights, predict, verbose=True):
     f1_score = 2 * ((precision * recall) / (precision + recall))
 
     if verbose:
+        print(method.__name__)
         print("  - accuracy={a}                       ".format(a=accuracy))
         print("  - precision={p}                       ".format(p=precision))
         print("  - recall={r}                       ".format(r=recall))
@@ -26,19 +27,17 @@ def compute_criterions(y, x, weights, predict, verbose=True):
 
     return accuracy, precision, recall, f1_score
 
+print("===COMPARE METHODS===")
 
 methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
 arguments = [lsGD_args, lsSGD_args, None, None, None, None]
 predict_fct = [predict_labels, predict_labels, None, None, None, None]
-criterions = np.zeros(len(methods))
+criterions = np.zeros((len(methods), 5), dtype=object)
 
 for i in range(2):
     method = methods[i]
     args = arguments[i]
     predict = predict_fct[i]
     weights, _ = method(y, x, *args)
-    accuracy, precision, recall, f1_score = compute_criterions(y, x, weights, predict)
+    accuracy, precision, recall, f1_score = compute_criterions(y, x, weights, predict, method)
     criterions[i] = np.array([method.__name__, accuracy, precision, recall, f1_score])
-
-
-

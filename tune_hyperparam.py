@@ -49,6 +49,7 @@ def cv_ls_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
 
 ### SCRIPT
 
+# will be commented as this script will be called from run.py where this global variable is defined
 DATA_TRAIN_PATH = 'data/train.csv'
 
 print('===LOADING DATA===')
@@ -56,13 +57,13 @@ y, x, ids = load_clean_data(DATA_TRAIN_PATH)
 
 print('===TUNE HYPERPARAMETERS===')
 
-k_fold = 5
 seed = 7
+k_fold = 5
+w_initial = np.zeros(x.shape[1])
+max_iters = 1000
 
 ### LEAST SQUARE GD AND SGD
 gammas = np.logspace(-10, -1, num=20)
-w_initial = np.zeros(x.shape[1])
-max_iters = 1000
 
 print("[least square GD]", end=" ")
 
@@ -84,22 +85,21 @@ lsSGD_args = [w_initial, max_iters, best_SGD_gamma]
 # plot
 cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
 
-### LEAST SQUARE AND RIDGE REGRESSSION
+### LEAST SQUARE RIDGE REGRESSSION
 
 lambdas = np.arange(0, 10, 0.1)
 
-print("[Ridge Regression]", end=" ")
+# Anita : had to comment this because was yielding an error ...
 
-t1 = time.time()
-best_RR_lambda, loss_tr_rr, loss_te_rr = tune_hyperparam(y, x, k_fold, seed, hprange=lambdas, method=ridge_regression, args = [], compute_loss=compute_rmse)
-t2 = time.time()
-print("time:", t2 - t1, "best lambda:", best_RR_lambda)
+# print("[Ridge Regression]", end=" ")
 
-#store best value
-file.write("ridge regression = {}\n".format({"lambda" : best_RR_lambda}))
+# t1 = time.time()
+# best_RR_lambda, loss_tr_rr, loss_te_rr = tune_hyperparam(y, x, k_fold, seed, hprange=lambdas, method=ridge_regression, args = [], compute_loss=compute_rmse)
+# t2 = time.time()
+# print("time:", t2 - t1, "best lambda:", best_RR_lambda)
 
-#plot
-cross_validation_visualization(lambdas, loss_tr_rr, loss_te_rr, "lambda", "rmse loss", "ridge regression cross validation")
+# #plot
+# cross_validation_visualization(lambdas, loss_tr_rr, loss_te_rr, "lambda", "rmse loss", "ridge regression cross validation")
 
 
 ### LOGISTIC REGRESSION
