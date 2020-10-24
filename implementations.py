@@ -89,12 +89,12 @@ def ridge_regression(y, tx, lambda_):
     #form and solve the equations
     a = np.dot(tx.transpose(), tx)
     lambda_p = 2 * len(y) * lambda_
-    a = a + np.dot(lambda_p, np.eye(len(y)))
+    a = a + np.dot(lambda_p, np.eye(a.shape[0]))
     b = np.dot(tx.transpose(), y)
     w = np.linalg.solve(a,b)
-
+    
     #compute the RMSE
-    loss = compute_rmse(x, y, w)
+    loss = compute_rmse(y, tx, w)
 
     return w, loss
 
