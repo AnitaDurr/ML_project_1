@@ -6,6 +6,7 @@ from proj1_helpers import *
 from implementations import *
 from helpers import *
 from cross_validation import *
+from data_load_clean_selection import *
 import time
 
 
@@ -55,9 +56,6 @@ y, x, ids = load_clean_data(DATA_TRAIN_PATH)
 
 print('===TUNE HYPERPARAMETERS===')
 
-TUNE_PATH = 'best_param.txt'
-file = open(TUNE_PATH, "a+")
-
 k_fold = 5
 seed = 7
 
@@ -68,20 +66,20 @@ max_iters = 1000
 
 print("[least square GD]", end=" ")
 
+
 t1 = time.time()
 best_GD_gamma, loss_tr_gd, loss_te_gd = tune_hyperparam(y, x, k_fold, seed, hprange=gammas, method=least_squares_GD, args=[w_initial, max_iters], compute_loss=compute_mse)
 t2 = time.time()
 print("time:", t2 - t1, "best gamma:", best_GD_gamma)
+lsGD_args = [w_initial, max_iters, best_GD_gamma]
 
 print("[least square SGD]", end=" ")
+
 t1 = time.time()
 best_SGD_gamma, loss_tr_sgd, loss_te_sgd = tune_hyperparam(y, x, k_fold, seed, hprange=gammas, method=least_squares_SGD, args=[w_initial, max_iters], compute_loss=compute_mse)
 t2 = time.time()
 print("time:", t2 - t1, "best gamma:", best_SGD_gamma)
-
-# store bests
-file.write("least_squares_GD = {}\n".format(best_GD_gamma))
-file.write("least_squares_SGD = {}\n".format(best_SGD_gamma))
+lsSGD_args = [w_initial, max_iters, best_SGD_gamma]
 
 # plot
 cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
@@ -90,7 +88,5 @@ cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
 
 ### LOGISTIC REGRESSION
 
-
-file.close()
 
 

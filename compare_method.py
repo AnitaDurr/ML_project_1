@@ -4,14 +4,8 @@ import matplotlib.pyplot as plt
 from proj1_helpers import *
 from implementations import *
 from helpers import *
+from data_load_clean_selection import *
 from tune_hyperparam import *
-import imp
-
-def getVarFromFile(filename):
-    f = open(filename)
-    global data
-    data = imp.load_source('data', '', f)
-    f.close()
 
 def compute_criterions(y, x, weights, predict, verbose=True):
     predictions = predict(weights, x)
@@ -32,25 +26,21 @@ def compute_criterions(y, x, weights, predict, verbose=True):
         print("  - recall={r}                       ".format(r=recall))
         print("  - F1 score={f}                       ".format(f=f1_score))
 
-    return [accuracy, precision, recall, f1_score]
+    return accuracy, precision, recall, f1_score
 
-
-
-y, x, ids = load_clean_data(DATA_TRAIN_PATH)
-getVarFromFile(TUNE_PATH)
 
 methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
-criterions = np.zeros((5, len(methods)))
+arguments = [lsGD_args, lsSGD_args, None, None, None, None]
+predict_fct = [predict_labels, predict_labels, None, None, None, None]
+criterions = np.zeros(len(methods))
 
-print(data.method[0].__name__)
-
-# for i in range(len(methods)):
-#     method = methods[i]
-#     args = data.method.__name__
-#     weights, loss = method(y_tr, x_tr, args)
-
-
-#     criterions[:i] = [method.__name__] + compute_criterions(y, x, weights, predict, verbose=True)
+for i in range(2):
+    method = methods[i]
+    args = arguments[i]
+    predict = predict_fct[i]
+    weights, _ = method(y, x, *args)
+    accuracy, precision, recall, f1_score = compute_criterions(y, x, weights, predict)
+    criterions[i] = np.array([method.__name__, accuracy, precision, recall, f1_score])
 
 
 
