@@ -95,6 +95,7 @@ t1 = time.time()
 best_RR_lambda, loss_tr_rr, loss_te_rr = tune_hyperparam(y, x, k_fold, seed, hprange=lambdas, method=ridge_regression, args = [], compute_loss=compute_rmse)
 t2 = time.time()
 print("time:", t2 - t1, "best lambda:", best_RR_lambda)
+rr_args = [best_RR_gamma]
 
 #plot
 cv_ls_rr(lambdas, loss_tr, loss_te)
