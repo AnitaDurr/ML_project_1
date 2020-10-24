@@ -1,6 +1,4 @@
-'''
-A script to select the best hyperparameters for each method and store them in a file
-'''
+'''A script to select the best hyperparameters for each method and store them in a file'''
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -36,20 +34,7 @@ def tune_hyperparam(y, x, k_fold, seed, hprange, method, args, compute_loss):
 
 	return best_hp, loss_tr, loss_te
 
-def cross_validation_visualization(hprange, loss_tr, loss_te, x_label, y_label, title):
-	"""
-	Visualization the curves of loss_tr and loss_te.
-	"""
-	plt.semilogx(hprange, loss_tr, marker=".", color='b', label='train error')
-	plt.semilogx(hprange, loss_te, marker=".", color='r', label='test error')
-	plt.xlabel(x_label)
-	plt.ylabel(y_label)
-	plt.title(title)
-	plt.legend(loc=2)
-	plt.grid(True)
-	plt.savefig(title)
-
-def cv_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
+def cv_ls_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
 	plt.figure()
 	plt.semilogx(hprange, loss_tr_gd, marker=".", color='b', label='GD train error')
 	plt.semilogx(hprange, loss_te_gd, marker=".", color='c', label='GD test error')
@@ -95,14 +80,11 @@ t2 = time.time()
 print("time:", t2 - t1, "best gamma:", best_SGD_gamma)
 
 # store bests
-file.write("least square GD = {}\n".format({"gamma" : best_GD_gamma}))
-file.write("least square SGD = {}\n".format({"gamma" : best_SGD_gamma}))
+file.write("least_squares_GD = {}\n".format(best_GD_gamma))
+file.write("least_squares_SGD = {}\n".format(best_SGD_gamma))
 
-
-# ploTS
-cross_validation_visualization(gammas, loss_tr_gd, loss_te_gd, "gamma", "mse loss", "least square GD cross validation")
-cross_validation_visualization(gammas, loss_tr_sgd, loss_te_sgd, "gamma", "mse loss", "least square SGD cross validation")
-cv_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
+# plot
+cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
 
 ### LEAST SQUARE NORMAL EQUATION AND RIDGE REGRESSSION
 

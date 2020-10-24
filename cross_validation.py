@@ -58,3 +58,35 @@ def cv_loss(y, x, k_indices, method, args, compute_loss):
 	cv_te = sum(loss_te) / k_fold
 
 	return cv_tr, cv_te
+
+def cv_criterion(y, x, k_indices, method, args):
+	"""
+	Compute the cv-losses, using a k-fold cross-validation on the k_indices,
+	for the given method called with arguments args and loss computed
+	with function compute_loss.
+	"""
+	k_fold = len(k_indices)
+	accuracy_te, precision_te, recall_te, f1_score_te = [], [], [], []
+
+	for k in range(k_fold):
+		# build the kth train-test dataset
+		x_tr, y_tr, x_te, y_te = kth_train_test(y, x, k_indices, k)
+
+		# learn the weights and compute the test criterions
+		weights, _ = method(y_tr, x_tr, *args)
+		accuracy, precision, recall, f1_score = compute_criterions(y_te, x_te, weights, predict)
+
+		# store the test criterions
+		accuracy_te.append(accuracy)
+		precision_te.append(precision)
+		recall_te.append(recall)
+		f1_score_te.append(f1_score)
+
+	# average the k results
+	cv_accuracy = sum(accuracy_te) / k_fold
+	cv_precision = sum(precision_te) / k_fold
+	cv_recall = sum(recal_te) / k_fold
+	cv_f1_score = sum(f1_score_te) / k_fold
+
+	return cv_accuracy, cv_precision, cv_recall, cv_f1_score
+
