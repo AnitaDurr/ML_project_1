@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from proj1_helpers import *
 from implementations import *
 from helpers import *
+import time
 
 ### functions to get the cross-validation loss
 
@@ -28,81 +29,115 @@ def kth_train_test(y, x, k_indices, k):
 
 	return x_tr, y_tr, x_te, y_te
 
-def cv_loss(y, x, k_indices, k, args, method):
-	"""return the cross-validation loss of the specified method."""
-
-	x_tr, y_tr, x_te, y_te = kth_train_test(y, x, k_indices, k)
-
-	if method == 'least_squares_GD':
-		weights, loss_tr = least_squares_GD(y_tr, x_tr, *args)
-	elif method == 'least_squares_SGD':
-		weights, loss_tr = least_squares_SGD(y_tr, x_tr, *args)
-
-	# calculate the mse loss for test data
-	loss_te = compute_mse(y_te, x_te, weights)
-
-	return loss_tr, loss_te
-
-### functions to tune and visualize hyperparameters and their corresponding cross-validation losses
-
-def cross_validation_visualization(lambds, mse_tr, mse_te):
+def cv_loss(y, x, k_indices, method, args, compute_loss):
 	"""
-	Visualization the curves of mse_tr and mse_te.
+	Compute the cv-losses, using a k-fold cross-validation on the k_indices,
+	for the given method called with arguments args and loss computed
+	with function compute_loss.
 	"""
-	plt.semilogx(lambds, mse_tr, marker=".", color='b', label='train error')
-	plt.semilogx(lambds, mse_te, marker=".", color='r', label='test error')
-	plt.xlabel("gamma")
-	plt.ylabel("mse")
-	title = "tuning gamma for least square SGD"
+	loss_tr = []
+	loss_te = []
+
+	for k in range(k_fold):
+		# build the kth train-test dataset
+		x_tr, y_tr, x_te, y_te = kth_train_test(y, x, k_indices, k)
+
+		# learn the weights and compute the train and test loss
+		weights, k_loss_tr = method(y_tr, x_tr, *args)
+		k_loss_te = compute_loss(y_te, x_te, weights)
+
+		# store the train and test loss
+		loss_tr.append(k_loss_tr)
+		loss_te.append(k_loss_te)
+
+	# average the k results
+	cv_tr = sum(loss_tr) / k_fold
+	cv_te = sum(loss_te) / k_fold
+
+	return cv_tr, cv_te
+
+
+### Functions to tune the hyperparameters and plot the result
+
+def tune_hyperparam(y, x, k_fold, seed, hprange, method, args, compute_loss):
+	"""
+	For the given method, computes the cross-validation loss of every hyperparameter
+	in hprange and selects the best one.
+	"""
+	k_indices = build_k_indices(y, k_fold, seed)
+
+	# define lists to store the loss of training data and test data
+	loss_tr = []
+	loss_te = []
+
+	# cross validation
+	for hp in hprange:
+		# compute the cv_losses
+		cv_tr, cv_te = cv_loss(y, x, k_indices, method, args + [hp], compute_loss)
+
+		loss_tr.append(cv_tr)
+		loss_te.append(cv_te)
+
+	# keep the hyperparam giving best loss on the test set
+	ind_hp_opt = np.argmin(loss_te)
+	best_hp = hprange[ind_hp_opt]
+
+	return best_hp, loss_tr, loss_te
+
+def cross_validation_visualization(hprange, loss_tr, loss_te, x_label, y_label, title):
+	"""
+	Visualization the curves of loss_tr and loss_te.
+	"""
+	plt.semilogx(hprange, loss_tr, marker=".", color='b', label='train error')
+	plt.semilogx(hprange, loss_te, marker=".", color='r', label='test error')
+	plt.xlabel(x_label)
+	plt.ylabel(y_label)
 	plt.title(title)
 	plt.legend(loc=2)
 	plt.grid(True)
 	plt.savefig(title)
-	plt.show
 
-def tune_hyperparam():
-	seed = 7
-	k_fold = 4
-
-	max_iters = 50
-	w_initial = np.zeros(x.shape[1])
-	gammas = np.logspace(-10, -1, num=50)
-
-	# split data in k fold
-	k_indices = build_k_indices(y, k_fold, seed)
-
-	# define lists to store the loss of training data and test data
-	mse_tr = []
-	mse_te = []
-
-	# cross validation
-	for ind, gamma in enumerate(gammas):
-		loss_tr = []
-		loss_te = []
-		args = w_initial, max_iters, gamma
-
-		# SGD with a given gammas
-		for k in range(k_fold):
-			k_loss_tr, k_loss_te = cv_loss(y, x, k_indices, k, args, method='least_squares_SGD')
-			loss_tr.append(k_loss_tr)
-			loss_te.append(k_loss_te)
-
-		# average the k results
-		mse_tr.append(sum(loss_tr) / k_fold)
-		mse_te.append(sum(loss_te) / k_fold)
-
-	# keep the gamma giving best mse loss on the test set
-	ind_gamma_opt = np.argmin(mse_te)
-	best_gamma = gammas[ind_gamma_opt]
-
-	cross_validation_visualization(gammas, mse_tr, mse_te)
-
-	# print(mse_te[ind_gamma_opt])
-	return best_gamma
-
-
+def cv_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
+	plt.figure()
+	plt.semilogx(hprange, loss_tr_gd, marker=".", color='b', label='GD train error')
+	plt.semilogx(hprange, loss_te_gd, marker=".", color='c', label='GD test error')
+	plt.semilogx(hprange, loss_tr_sgd, marker=".", color='r', label='SGD train error')
+	plt.semilogx(hprange, loss_te_sgd, marker=".", color='m', label='SGD test error')
+	plt.xlabel("gamma")
+	plt.ylabel("mse loss")
+	title = "Tuning the gamma for the least square GD and SGD"
+	plt.title(title)
+	plt.legend(loc=2)
+	plt.grid(True)
+	plt.savefig("GD_SGD")
 
 print('===LOADING DATA===')
 y, x, ids = load_clean_data(DATA_TRAIN_PATH)
+
 print('===TUNE HYPERPARAMETERS===')
-print(tune_hyperparam())
+k_fold = 5
+seed = 7
+
+print("[least square GD]", end=" ")
+
+gammas = np.logspace(-10, -1, num=50)
+w_initial = np.zeros(x.shape[1])
+max_iters = 1000
+
+t1 = time.time()
+best_GD_gamma, loss_tr_gd, loss_te_gd = tune_hyperparam(y, x, k_fold, seed, hprange=gammas, method=least_squares_GD, args=[w_initial, max_iters], compute_loss=compute_mse)
+t2 = time.time()
+cross_validation_visualization(gammas, loss_tr_gd, loss_te_gd, "gamma", "mse loss", "least square GD cross validation")
+print("time:", t2 - t1, "best gamma:", best_GD_gamma)
+
+
+print("[least square SGD]", end=" ")
+
+t1 = time.time()
+best_SGD_gamma, loss_tr_sgd, loss_te_sgd = tune_hyperparam(y, x, k_fold, seed, hprange=gammas, method=least_squares_SGD, args=[w_initial, max_iters], compute_loss=compute_mse)
+t2 = time.time()
+cross_validation_visualization(gammas, loss_tr_sgd, loss_te_sgd, "gamma", "mse loss", "least square SGD cross validation")
+print("time:", t2 - t1, "best gamma:", best_SGD_gamma)
+
+cv_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
+
