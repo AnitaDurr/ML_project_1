@@ -1,9 +1,7 @@
 '''A script that compares the 6 implemented methods usign for each of them the best hyperparameters.'''
 import numpy as np
 import matplotlib.pyplot as plt
-from proj1_helpers import *
 from implementations import *
-from helpers import *
 from data_load_clean_selection import *
 from tune_hyperparam import *
 

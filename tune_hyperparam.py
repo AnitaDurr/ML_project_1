@@ -2,9 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from proj1_helpers import *
 from implementations import *
-from helpers import *
 from cross_validation import *
 from data_load_clean_selection import *
 import time
