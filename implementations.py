@@ -110,11 +110,11 @@ def neg_log_likelihood(y, tx, w):
     return np.squeeze(- loss)
 
 def logistic_regression(y, tx, initial_w, max_iters=1000, gamma=0.01):
-	w = initial_w
+    w = initial_w
 
     for iter in range(max_iters):
         print('Iteration: {i}'.format(i=iter),end='\r')
-        
+
         # compute the gradient and update w
         pred = sigmoid(tx.dot(w))
         grad = tx.T.dot(pred - y)
@@ -130,7 +130,7 @@ def reg_logistic_regression(y, tx, initial_w, lambda_ = 1, max_iters=1000, gamma
 
     for iter in range(max_iters):
         print('Iteration: {i}'.format(i=iter),end='\r')
-        
+
         # compute the gradient, add penalty term and update w
         pred = sigmoid(tx.dot(w))
         grad = tx.T.dot(pred - y) + (2 * lambda_ * w)
