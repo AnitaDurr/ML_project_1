@@ -109,11 +109,7 @@ def neg_log_likelihood(y, tx, w):
     loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
     return np.squeeze(- loss)
 
-def logistic_regression(y, x, initial_w, max_iters=1000, gamma=0.01, SGD=False):
-    # build tx, initial weights
-    tx = np.c_[np.ones((y.shape[0], 1)), x]
-    threshold = 1e-8
-    losses = []
+def logistic_regression(y, x, initial_w, max_iters=1000, gamma=0.01):
 
     for iter in range(max_iters):
         print('Iteration: {i}'.format(i=iter),end='\r')
@@ -133,12 +129,7 @@ y = np.expand_dims(y, axis=1)
 print(X.shape)
 print(y.shape)
 
-def reg_logistic_regression(y, x, initial_w, lambda_, max_iters=1000, gamma=0.01):
-    # build tx, initial weights
-    tx = np.c_[np.ones((y.shape[0], 1)), x]
-    w = np.zeros((tx.shape[1], 1)) + initial_w
-    threshold = 1e-8
-    losses = []
+def reg_logistic_regression(y, x, initial_w, lambda_ = 1, max_iters=1000, gamma=0.01):
 
     for iter in range(max_iters):
         print('Iteration: {i}'.format(i=iter),end='\r')
