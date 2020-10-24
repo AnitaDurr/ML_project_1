@@ -97,7 +97,7 @@ t2 = time.time()
 print("time:", t2 - t1, "best lambda:", best_RR_lambda)
 
 #plot
-cross_validation_visualization(lambdas, loss_tr_rr, loss_te_rr, "lambda", "rmse loss", "ridge regression cross validation")
+cv_ls_rr(lambdas, loss_tr, loss_te)
 
 
 
