@@ -9,18 +9,16 @@ from tune_hyperparam import *
 
 print("===COMPARE METHODS===")
 
-
 # add arguments for your functions (shoudl actually be variables defined at the enf of the hyperparam tuning)
 methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
-arguments = [lsGD_args, lsSGD_args, None, None, None, None]
+arguments = [lsGD_args, lsSGD_args, [], rr_args, None, None]
 
 seed = 42
 k_fold = 4
 k_indices = build_k_indices(y, k_fold, seed)
-criterions = np.zeros((len(methods), 5), dtype=object)
 
-# change so that i is in range(len(methods)) when everything is working
-for i in range(2):
+criterions = np.zeros((len(methods), 5), dtype=object)
+for i in range(4):
     method = methods[i]
     args = arguments[i]
 

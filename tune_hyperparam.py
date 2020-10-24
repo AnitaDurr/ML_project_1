@@ -88,17 +88,18 @@ cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
 
 lambdas = np.arange(0, 10, 0.1)
 
-# Anita : had to comment this because was yielding an error ...
+print("[Ridge Regression]", end=" ")
 
-# print("[Ridge Regression]", end=" ")
+t1 = time.time()
+best_RR_lambda, loss_tr_rr, loss_te_rr = tune_hyperparam(y, x, k_fold, seed, hprange=lambdas, method=ridge_regression, args = [], compute_loss=compute_rmse)
+t2 = time.time()
+print("time:", t2 - t1, "best lambda:", best_RR_lambda)
+rr_args = [best_RR_lambda]
 
-# t1 = time.time()
-# best_RR_lambda, loss_tr_rr, loss_te_rr = tune_hyperparam(y, x, k_fold, seed, hprange=lambdas, method=ridge_regression, args = [], compute_loss=compute_rmse)
-# t2 = time.time()
-# print("time:", t2 - t1, "best lambda:", best_RR_lambda)
+#plot
+cv_ls_rr(lambdas, loss_tr, loss_te)
 
-# #plot
-# cross_validation_visualization(lambdas, loss_tr_rr, loss_te_rr, "lambda", "rmse loss", "ridge regression cross validation")
+
 
 
 ### LOGISTIC REGRESSION
