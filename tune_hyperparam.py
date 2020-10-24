@@ -1,4 +1,4 @@
-'''A script to select the best hyperparameters for each method and store them in a file'''
+'''A script to select the best hyperparameters for each method'''
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,14 +51,13 @@ def cv_ls_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
 
 # will be commented as this script will be called from run.py where this global variable is defined
 DATA_TRAIN_PATH = 'data/train.csv'
-
 print('===LOADING DATA===')
 y, x, ids = load_clean_data(DATA_TRAIN_PATH)
 
 print('===TUNE HYPERPARAMETERS===')
 
 seed = 7
-k_fold = 5
+k_fold = 4
 w_initial = np.zeros(x.shape[1])
 max_iters = 1000
 

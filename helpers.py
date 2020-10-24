@@ -1,8 +1,13 @@
+'''
+Functions for
+_ data processing : loading, cleaning and feature selection
+_ loss computations : mse loss, neg_log_likelihood, accuracy, precision, recall f1-score
+_ predict labels
+'''
+
 import numpy as np
 import csv
-# Script for data loading, data cleaning and feature selection.
 
-# Functions
 def load_csv_data(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
@@ -21,7 +26,6 @@ def load_csv_data(data_path, sub_sample=False):
         ids = ids[::50]
 
     return yb, input_data, ids
-
 
 def standardize(x):
     mean_x = np.mean(x, axis=0)
@@ -90,6 +94,41 @@ def create_csv_submission(ids, y_pred, name):
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
 
+def compute_mse(y, tX, w):
+    """
+    Compute the mse loss.
+    """
+    e = y - tX.dot(w)
+    mse = e.dot(e) / (2 * len(e))
+    return mse
+
+def sigmoid(t):
+    """Applies the sigmoid function"""
+    return 1.0 / (1 + np.exp(-t))
+
+def neg_log_likelihood(y, tx, w):
+    """compute the loss: negative log likelihood."""
+    pred = sigmoid(tx.dot(w))
+    loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
+    return np.squeeze(- loss)
+
+def compute_criterions(y, x, weights):
+    predictions = predict_labels(weights, x)
+
+    true_positives = len([i for i in range(len(y)) if (predictions[i] == 1 and y[i] == 1)])
+    false_positives = len([i for i in range(len(y)) if (predictions[i] == 1 and y[i] == 0)])
+    true_negatives = len([i for i in range(len(y)) if (predictions[i] == 0 and y[i] == 0)])
+    false_negatives = len([i for i in range(len(y)) if (predictions[i] == 0 and y[i] == 1)])
+
+    accuracy = (true_positives + true_negatives) / (true_positives + false_positives + true_negatives + false_negatives)
+    precision = true_positives / (true_positives + false_positives)
+    recall = true_positives / (true_positives + false_negatives)
+    f1_score = 2 * ((precision * recall) / (precision + recall))
+
+    return accuracy, precision, recall, f1_score
+
+
+### to be fusionned !!!
 
 def calculate_predictions_log(tx, w):
     predictions = []

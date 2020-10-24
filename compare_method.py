@@ -1,43 +1,29 @@
-'''A script that compares the 6 implemented methods usign for each of them the best hyperparameters.'''
+'''A script that compares machine learning methods using for each of them
+the best hyperparameters, and select the best model.'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 from implementations import *
 from helpers import *
 from tune_hyperparam import *
 
-def compute_criterions(y, x, weights, predict, verbose=True):
-    predictions = predict(weights, x)
-
-    true_positives = len([i for i in range(len(y)) if (predictions[i] == 1 and y[i] == 1)])
-    false_positives = len([i for i in range(len(y)) if (predictions[i] == 1 and y[i] == 0)])
-    true_negatives = len([i for i in range(len(y)) if (predictions[i] == 0 and y[i] == 0)])
-    false_negatives = len([i for i in range(len(y)) if (predictions[i] == 0 and y[i] == 1)])
-
-    accuracy = (true_positives + true_negatives) / (true_positives + false_positives + true_negatives + false_negatives)
-    precision = true_positives / (true_positives + false_positives)
-    recall = true_positives / (true_positives + false_negatives)
-    f1_score = 2 * ((precision * recall) / (precision + recall))
-
-    if verbose:
-        print(method.__name__)
-        print("  - accuracy={a}                       ".format(a=accuracy))
-        print("  - precision={p}                       ".format(p=precision))
-        print("  - recall={r}                       ".format(r=recall))
-        print("  - F1 score={f}                       ".format(f=f1_score))
-
-    return accuracy, precision, recall, f1_score
-
 print("===COMPARE METHODS===")
 
+
+# add arguments for your functions (shoudl actually be variables defined at the enf of the hyperparam tuning)
 methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
 arguments = [lsGD_args, lsSGD_args, None, None, None, None]
-predict_fct = [predict_labels, predict_labels, None, None, None, None]
+
+seed = 42
+k_fold = 4
+k_indices = build_k_indices(y, k_fold, seed)
 criterions = np.zeros((len(methods), 5), dtype=object)
 
+# change so that i is in range(len(methods)) when everything is working
 for i in range(2):
     method = methods[i]
     args = arguments[i]
-    predict = predict_fct[i]
-    weights, _ = method(y, x, *args)
-    accuracy, precision, recall, f1_score = compute_criterions(y, x, weights, predict, method)
+
+    accuracy, precision, recall, f1_score = cv_criterions(y, x, k_indices, method, args)
+
     criterions[i] = np.array([method.__name__, accuracy, precision, recall, f1_score])

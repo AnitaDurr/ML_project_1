@@ -17,7 +17,8 @@ weights = best_method(y, tX, best_args)
 
 # Generate predictions and save ouput in csv format for submission
 DATA_TEST_PATH = 'data/test.csv'
-_, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
+_, tX_test, ids_test = load_clean_data(DATA_TEST_PATH)
+
 
 OUTPUT_PATH = 'data/predict.csv'
 y_pred = predict_labels(weights, tX_test)

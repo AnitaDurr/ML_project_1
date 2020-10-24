@@ -1,38 +1,16 @@
+'''Implementation of six machine learning methods.'''
+
 import numpy as np
+from helpers import *
 
-
-### cost functions
-
-def compute_mse(y, tX, w):
-	"""
-	Compute the mse loss.
-	"""
-	e = y - tX.dot(w)
-	mse = e.dot(e) / (2 * len(e))
-	return mse
-
-def compute_rmse(y, tX, w):
-	"""
-	Compute the rmse loss.
-	"""
-	return np.sqrt(2 * compute_mse(y, tX, w))
-
-def compute_mae(y, tX, w):
-	"""
-	Compute the mae loss.
-	"""
-	e = y - tX.dot(w)
-	return np.mean(np.absolute(e))
 
 def compute_gradient(y, tX, w):
-	"""
-	Gradient of the linear mse function.
-	"""
-	e = y - tX.dot(w)
-	return - tX.T.dot(e) / tX.shape[0]
+    """
+    Gradient of the linear mse function.
+    """
+    e = y - tX.dot(w)
+    return - tX.T.dot(e) / tX.shape[0]
 
-
-### ML methods
 
 def least_squares_GD(y, tX, initial_w, max_iters, gamma):
 	"""
@@ -97,17 +75,6 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_rmse(x, y, w)
 
     return w, loss
-
-# Logisitc regressions:
-def sigmoid(t):
-    """Applies the sigmoid function"""
-    return 1.0 / (1 + np.exp(-t))
-
-def neg_log_likelihood(y, tx, w):
-    """compute the loss: negative log likelihood."""
-    pred = sigmoid(tx.dot(w))
-    loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
-    return np.squeeze(- loss)
 
 def logistic_regression(y, tx, initial_w, max_iters=1000, gamma=0.01):
     w = initial_w
