@@ -30,11 +30,11 @@ def compute_criterions(y, x, weights, predict, verbose=True):
 print("===COMPARE METHODS===")
 
 methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
-arguments = [lsGD_args, lsSGD_args, None, None, None, None]
-predict_fct = [predict_labels, predict_labels, None, None, None, None]
+arguments = [lsGD_args, lsSGD_args, [], rr_args, None, None]
+predict_fct = [predict_labels, predict_labels, predict_labels, predict_labels, None, None]
 criterions = np.zeros((len(methods), 5), dtype=object)
 
-for i in range(2):
+for i in range(4):
     method = methods[i]
     args = arguments[i]
     predict = predict_fct[i]
