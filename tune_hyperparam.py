@@ -49,6 +49,8 @@ def cv_ls_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
 
 ### SCRIPT
 
+DATA_TRAIN_PATH = 'data/train.csv'
+
 print('===LOADING DATA===')
 y, x, ids = load_clean_data(DATA_TRAIN_PATH)
 
