@@ -46,6 +46,7 @@ def cv_ls_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
 	plt.legend(loc=2)
 	plt.grid(True)
 	plt.savefig("GD_SGD")
+	plt.close()
 
 def cv_log_reg(gamma_range, lambda_range, loss_df, filename, plot_title):
 	ax = plt.axes()
