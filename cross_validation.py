@@ -97,10 +97,10 @@ def cv_criterions(y, x, k_indices, method, args, verbose=True):
 
 	if verbose:
 		print(method.__name__)
-		print("  - accuracy={a}						".format(a=accuracy))
-		print("  - precision={p}						".format(p=precision))
-		print("  - recall={r}						".format(r=recall))
-		print("  - F1 score={f}						".format(f=f1_score))
+		print("  - accuracy={a}						".format(a=cv_accuracy))
+		print("  - precision={p}						".format(p=cv_precision))
+		print("  - recall={r}						".format(r=cv_recall))
+		print("  - F1 score={f}						".format(f=cv_f1_score))
 
-	return cv_accuracy, cv_precision, cv_recall, cv_f1_score
+	return accuracy_te, precision_te, cv_recall_te, cv_f1_score_te
 
