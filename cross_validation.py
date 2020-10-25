@@ -47,7 +47,14 @@ def cv_loss(y, x, k_indices, method, args, compute_loss):
 
 		# learn the weights and compute the train and test loss
 		weights, k_loss_tr = method(y_tr, x_tr, *args)
-		k_loss_te = compute_loss(y_te, x_te, weights)
+		
+		if method == reg_logistic_regression:
+			# For negative log-likelihood: normalise by sample size to compare train and test
+			k_loss_tr = k_loss_tr / y_tr.shape[0]
+			k_loss_te = neg_log_likelihood(y_te, x_te, weights)
+			k_loss_te = k_loss_te / y_te.shape[0]
+		else:
+			k_loss_te = compute_loss(y_te, x_te, weights)
 
 		# store the train and test loss
 		loss_tr.append(k_loss_tr)
