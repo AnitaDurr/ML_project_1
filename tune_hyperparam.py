@@ -47,6 +47,17 @@ def cv_ls_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
 	plt.grid(True)
 	plt.savefig("GD_SGD")
 	plt.close()
+	
+def cv_ls_rr(lambda_range, loss_tr, loss_te):
+    plt.figure()
+    plt.plot(lambda_range, loss_tr, marker = ".", color = 'b', label = 'RR test error')
+    plt.plot(lambda_range, loss_te, marker = ".", color = 'c', label = 'RR test error')
+    plt.xlabel("lambda")
+    plt.ylabel("rmse loss")
+    plt.title("Tuning lambda for Least Squares Ridge Regression")
+    plt.grid(True)
+    plt.savefig("RR")
+    plt.close()
 
 def cv_log_reg(gamma_range, lambda_range, loss_df, filename, plot_title):
 	ax = plt.axes()
