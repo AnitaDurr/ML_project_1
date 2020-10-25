@@ -107,7 +107,7 @@ cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
 
 ### LEAST SQUARE RIDGE REGRESSSION
 
-lambdas = np.arange(0, 10, 0.1)
+lambdas = np.arange(0.0, 10.0, 0.1)
 
 print("[Ridge Regression]", end=" ")
 
@@ -118,7 +118,7 @@ print("time:", t2 - t1, "best lambda:", best_RR_lambda)
 rr_args = [best_RR_lambda]
 
 #plot
-cv_ls_rr(lambdas, loss_tr, loss_te)
+cv_ls_rr(lambdas, loss_tr_rr, loss_te_rr)
 
 ### LOGISTIC REGRESSION
 # logistic == logistic regression
