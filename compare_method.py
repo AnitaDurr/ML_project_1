@@ -11,7 +11,7 @@ print("===COMPARE METHODS===")
 
 # add arguments for your functions (shoudl actually be variables defined at the enf of the hyperparam tuning)
 methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
-arguments = [lsGD_args, lsSGD_args, [], rr_args, None, None]
+arguments = [lsGD_args, lsSGD_args, [], rr_args, logistic_args, reg_log_arg]
 
 seed = 42
 k_fold = 4
