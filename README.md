@@ -6,7 +6,7 @@
 
 - [ ] keep only 1 predict label function (use flag for the log regression case)
 - [ ] tune hyperparam and plot for
-  - [ ] ridge regression
+  - [/] ridge regression
   - [ ] regularized logistic regression
 - [ ] compare the methods:
   - [ ] compute the 4 criterions for all methods (done for least square GD and SGD)
