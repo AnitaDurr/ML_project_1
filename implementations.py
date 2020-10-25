@@ -76,12 +76,20 @@ def ridge_regression(y, tx, lambda_):
 
     return w, loss
 
-def logistic_regression(y, tx, initial_w, max_iters=1000, gamma=0.01):
+def sigmoid(t):
+    """Applies the sigmoid function"""
+    return 1.0 / (1 + np.exp(-t))
+
+def neg_log_likelihood(y, tx, w):
+    """compute the loss: negative log likelihood."""
+    pred = sigmoid(tx.dot(w))
+    loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
+    return np.squeeze(- loss)
+
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
     w = initial_w
 
     for iter in range(max_iters):
-        print('Iteration: {i}'.format(i=iter),end='\r')
-
         # compute the gradient and update w
         pred = sigmoid(tx.dot(w))
         grad = tx.T.dot(pred - y)
@@ -92,19 +100,18 @@ def logistic_regression(y, tx, initial_w, max_iters=1000, gamma=0.01):
     loss = neg_log_likelihood(y, tx, w)
     return w, loss
 
-def reg_logistic_regression(y, tx, initial_w, lambda_ = 1, max_iters=1000, gamma=0.01):
+def reg_logistic_regression(y, tx, initial_w, lambda_ , max_iters, gamma):
     w = initial_w
 
     for iter in range(max_iters):
-        print('Iteration: {i}'.format(i=iter),end='\r')
-
-        # compute the gradient, add penalty term and update w
-        pred = sigmoid(tx.dot(w))
-        grad = tx.T.dot(pred - y) + (2 * lambda_ * w)
-        w = w - gamma * grad
+	# compute the gradient, add penalty term and update w
+	pred = sigmoid(tx.dot(w))
+	grad = tx.T.dot(pred - y) + (2 * lambda_ * w)
+	w = w - gamma * grad
 
     # Calculate final loss, add penalty term
     pred = sigmoid(tx.dot(w))
     loss = neg_log_likelihood(y, tx, w) + (lambda_ * np.squeeze(w.T.dot(w)))
     return w, loss
+
 
