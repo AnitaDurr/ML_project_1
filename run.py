@@ -3,17 +3,7 @@
 
 from implementations import *
 from helpers import *
-<<<<<<< HEAD
 from compare_method import *
-=======
-
-# load training data into class labels, feature matrix and event ids
-DATA_TRAIN_PATH = 'data/train.csv'
-print('===LOADING TRAIN DATA===')
-y, tx, ids = load_clean_data(DATA_TRAIN_PATH)
-
-from compare_method import * 		# this will execute the compare_method script
->>>>>>> f4fa662c00940128596896e4bca299210b6a126a
 
 # best_method and best_args should have been selected in compare_method script
 
