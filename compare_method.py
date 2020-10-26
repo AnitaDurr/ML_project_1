@@ -56,6 +56,7 @@ k_fold = 4
 k_indices = build_k_indices(y, k_fold, seed)
 
 criterions_df = []
+best_args = []
 best_accuracy = 0
 for i in range(6):
     method = methods[i]
@@ -70,4 +71,7 @@ for i in range(6):
         best_method = method
         best_args = args
 
+print("===BEST METHOD===")
+print('Best method:', best_method.__name__)
+print('Best parameters:', best_args)
 create_boxplot(criterions_df, methods)
