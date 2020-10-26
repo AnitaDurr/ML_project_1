@@ -30,7 +30,7 @@
 	
 	Classification is a common problem in Machine Learning. It can be either supervised, where the aim is to highlight the difference between groups by showing how well they can be separated (e.g. random forests, logistic regressions, etc.), or unsupervised, where the aim is to create data-driven groups in the data, i.e. clusters.
 	
-	In this paper, we will give a few possible solutions to the problem of detecting the Higgs boson. We used a CERN Higgs Boson dataset, with 250000 training data points, and the same amount of test data points, where each data point has 30 features. Because the problem is concerned with detecting the Higgs Boson, the label has two possible values - “s”, when a Higgs Boson has been detected (signal), and “b”, otherwise (“background”). In our implementation, we have replaces the “s” and “b” values with 1 and 0, respectively.
+	In this paper, we will give a few possible solutions to the problem of detecting the Higgs boson. We used a CERN Higgs Boson dataset, with $250000$ training data points, and $568238$ test data points, where each data point has 30 features. Because the problem is concerned with detecting the Higgs Boson, the label has two possible values - “s”, when a Higgs Boson has been detected (signal), and “b”, otherwise (“background”). In our implementation, we have replaces the “s” and “b” values with 1 and 0, respectively.
 	Here we aim to test different Machine Learning methods on the train dataset, in order to predict the labels for the test dataset.
 	
 	
@@ -47,7 +47,7 @@
 	
 	
 	\subsection{Data Cleaning and Feature Selection}
-	The data cleaning consisted of replacing missing values ($-999$) by the feature mean.
+	The data cleaning consisted of replacing missing values ($-999$) by the feature mean and normalizing the data.
 	\\
 	We used a correlation-based feature selection. For this, Pearson’s correlation between the features, and of the features with the label was computed. For all pairs of features having a high correlation ($> 0.9$), we removed the one having the lowest correlation with the prediction (label).
 	
