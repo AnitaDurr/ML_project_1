@@ -138,50 +138,43 @@ rr_args = [best_RR_lambda]
 #plot
 cv_ls_rr(lambdas, loss_tr_rr, loss_te_rr)
 
+
 ### LOGISTIC REGRESSION
 # logistic == logistic regression
 # reg_log == regularized logistic regression
-lambdas = np.arange(0, 21, 5)
-gammas = np.logspace(-12, -4.7, num=12)
+gammas = np.logspace(-12, -4.7, num=15)
 
 print("[Logistic regressions]", end=" ")
 
 t1 = time.time()
+log_best_gamma, log_loss_tr, log_loss_te = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=logistic_regression, args=[w_initial, max_iters], compute_loss=neg_log_likelihood)
+t2 = time.time()
+print("time:", t2 - t1, "Logistic regression best gamma:", log_best_gamma)
 
 # For this one we have to tune both gammas and lambdas.
-# lambda_ == 0 corresponds to logistic regression, thus if lambda_ == 0: keep the values and get best gamma
-# Then continue the iterations for penalised logistic regression
-for lambda_ in lambdas:
-	if lambda_ == 0:
-		log_best_gamma, log_loss_tr, log_loss_te = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=logistic_regression, args=[w_initial, max_iters], compute_loss=neg_log_likelihood)
-		# First iteration: creates numpy arrays that will become data frames for heatmaps
-		t2 = time.time()
-		print("time:", t2 - t1, "Logistic regression best gamma:", log_best_gamma)
-		# Start storing best values to keep the best gamma/lambda combination for reg. logistic
-		reg_best_gamma = log_best_gamma
-		reg_best_lambda = 0
-		reg_best_loss = np.argmin(log_loss_te)
-		# plots the loss for gamma comparison in logistic regression
-		cv_gam_log(gammas, log_loss_tr, log_loss_te)
-	else:
-		reg_lambda_best_gamma, reg_loss_tr, reg_loss_te = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=reg_logistic_regression, args=[w_initial, lambda_, max_iters], compute_loss=neg_log_likelihood)
-
-		# if statement to store the best lambda/gamma combination, if the loss is better than the previous best one
-		if np.argmin(reg_loss_tr) < reg_best_loss:
-			reg_best_loss = np.argmin(reg_loss_tr)
-			reg_best_lambda = lambda_
-			reg_best_gamma = reg_lambda_best_gamma
-
-		# storing losses at lambda == 10 and 20 for plotting the lambda comparison
-		if lambda_ == 10:
-			loss_l10 = reg_loss_te
-		elif lambda_ == 20:
-			loss_l20 = reg_loss_te
-
-t3 = time.time()
-# find best gamma in reg
 print("[Regularized logistic regressions]", end=" ")
-print("time:", t3 - t1, "Regularized logistic regression best gamma:", reg_best_gamma, ' ,best lambda:', reg_best_lambda)
+
+lambdas = np.arange(1, 21, 5)
+reg_best_loss = np.inf()
+t1 = time.time()
+
+for lambda_ in lambdas:
+	reg_lambda_best_gamma, reg_loss_tr, reg_loss_te = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=reg_logistic_regression, args=[w_initial, lambda_, max_iters], compute_loss=neg_log_likelihood)
+	# store gamma and lambda, if the best loss is the best
+	if np.argmin(reg_loss_tr) < reg_best_loss:
+		reg_best_loss = np.argmin(reg_loss_tr)
+		reg_best_lambda = lambda_
+		reg_best_gamma = reg_lambda_best_gamma
+
+	# storing losses at lambda == 10 and 20 for plotting the lambda comparison
+	if lambda_ == 10:
+		loss_l10 = reg_loss_te
+	elif lambda_ == 20:
+		loss_l20 = reg_loss_te
+
+t2 = time.time()
+# find best gamma in reg
+print("time:", t2 - t1, "Regularized logistic regression best gamma:", reg_best_gamma, ' ,best lambda:', reg_best_lambda)
 
 cv_reg_log(gammas, log_loss_te, loss_l10, loss_l20)
 
