@@ -18,7 +18,7 @@ tx_test = np.delete(tx_test, features_to_remove, axis=1)
 print('===PREDICTION===')
 OUTPUT_PATH = 'data/predict.csv'
 if best_method in [logistic_regression, reg_logistic_regression]:
-    y_pred = predict_labels(weights, tx, is_LR=True, submission=True)
+    y_pred = predict_labels(weights, tx_test, is_LR=True, submission=True)
 else:
     y_pred = predict_labels(weights, tx_test, is_LR=False, submission=True)
 create_csv_submission(ids_test, y_pred, OUTPUT_PATH)
