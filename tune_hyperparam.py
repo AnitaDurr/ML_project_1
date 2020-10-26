@@ -154,7 +154,7 @@ print("time:", t2 - t1, "Logistic regression best gamma:", log_best_gamma)
 # For this one we have to tune both gammas and lambdas.
 print("[Regularized logistic regressions]", end=" ")
 
-lambdas = np.arange(1, 21, 5)
+lambdas = [1,5,10,15,20]
 reg_best_loss = np.inf
 t1 = time.time()
 
