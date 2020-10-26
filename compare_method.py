@@ -7,26 +7,6 @@ from implementations import *
 from helpers import *
 from tune_hyperparam import *
 
-print("===COMPARE METHODS===")
-
-# add arguments for your functions (shoudl actually be variables defined at the enf of the hyperparam tuning)
-methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
-arguments = [lsGD_args, lsSGD_args, [], rr_args, logistic_args, reg_log_arg]
-
-seed = 42
-k_fold = 4
-k_indices = build_k_indices(y, k_fold, seed)
-
-criterions = []
-for i in range(4):
-    method = methods[i]
-    args = arguments[i]
-
-    accuracy, precision, recall, f1_score = cv_criterions(y, x, k_indices, method, args)
-
-    criterions.append[method.__name__, accuracy, precision, recall, f1_score]
-
- 
 def set_box_color(bp, color):
     plt.setp(bp['boxes'], color=color)
     plt.setp(bp['whiskers'], color=color)
@@ -64,3 +44,29 @@ def create_boxplot(criterions, methods):
     ax.set_xticklabels(methods)
     ax.set_xticks(xticks)
     plt.savefig('Classifiers_comparison.pdf')
+
+print("===COMPARE METHODS===")
+
+# add arguments for your functions (shoudl actually be variables defined at the enf of the hyperparam tuning)
+methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
+arguments = [lsGD_args, lsSGD_args, [], rr_args, logistic_args, reg_log_args]
+
+seed = 42
+k_fold = 4
+k_indices = build_k_indices(y, k_fold, seed)
+
+criterions_df = []
+best_accuracy = 0
+for i in range(6):
+    method = methods[i]
+    args = arguments[i]
+
+    accuracy, precision, recall, f1_score = cv_criterions(y, tx, k_indices, method, args)
+
+    criterions_df.append([method.__name__, accuracy, precision, recall, f1_score])
+
+    if np.mean(accuracy) > best_accuracy:
+        best_accuracy = np.mean(accuracy)
+        best_method = method
+
+create_boxplot(criterions_df, methods)
