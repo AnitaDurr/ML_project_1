@@ -110,6 +110,5 @@ def reg_logistic_regression(y, tx, initial_w, lambda_ , max_iters, gamma):
 
     # Calculate final loss, add penalty term
     pred = sigmoid(tx.dot(w))
-    # Here we return the unpenalised loss, in order to compare the loss for different lambdas
-    loss = neg_log_likelihood(y, tx, w) # + (lambda_ * np.squeeze(w.T.dot(w))) Here is the penalisation term if needed
+    loss = neg_log_likelihood(y, tx, w) + (lambda_ * np.squeeze(w.T.dot(w)))
     return w, loss
