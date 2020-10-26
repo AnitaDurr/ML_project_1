@@ -89,8 +89,8 @@ def cv_reg_log(hprange, loss_l0, loss_l10, loss_l20):
 ### SCRIPT
 
 DATA_TRAIN_PATH = 'data/train.csv'
-print('===LOADING DATA===')
-y, tx, ids = load_clean_data(DATA_TRAIN_PATH)
+print('===LOADING TRAIN DATA===')
+y, tx, ids, features_to_remove = load_clean_data(DATA_TRAIN_PATH, feature_selection=True)
 
 print('===TUNE HYPERPARAMETERS===')
 
