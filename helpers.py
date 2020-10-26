@@ -37,9 +37,10 @@ def standardize(x):
 def pearson(X, Y):
     return np.cov(X, Y)[0, 1] / (np.std(X) * np.std(Y))
 
-def load_clean_data(file, sub_sample=False):
+
+def load_clean_data(file, feature_selection=True):
     print('Loading data...')
-    y, X, ids = load_csv_data(file, sub_sample)
+    y, X, ids = load_csv_data(file, sub_sample=False)
 
     # Data cleaning
     print('Handling missing values...')
@@ -51,6 +52,9 @@ def load_clean_data(file, sub_sample=False):
     # Data standardization
     print('Standardisation...')
     X = standardize(X)
+    if feature_selection==False:
+        tX = np.c_[np.ones((y.shape[0], 1)), X]
+        return y, X, ids
 
     # Feature selection
     print('Feature selection...')
@@ -76,9 +80,9 @@ def load_clean_data(file, sub_sample=False):
 
     # remove the features in the highly correlated couples that correlated the less with the label
     X = np.delete(X, list(set(features_to_remove)), axis=1)
-    # tX = np.c_[np.ones((y.shape[0], 1)), X]
+    tX = np.c_[np.ones((y.shape[0], 1)), X]
 
-    return y, X, ids
+    return y, X, ids, list(set(features_to_remove))
 
 def create_csv_submission(ids, y_pred, name):
     """
@@ -143,22 +147,41 @@ def compute_criterions(y, x, weights, method):
 
     return accuracy, precision, recall, f1_score
 
-def predict_labels(w, tx, is_LR=False):
+def predict_labels(w, tx, is_LR=False, submission=False):
     """
     Generates class predictions given weights, and a test data matrix
     """
-    if is_LR == True:
-        predictions = []
-        for i in range(tx.shape[0]):
-            pred = sigmoid(tx[i,].dot(w))
-            if pred > 0.5:
-                predictions.append(1)
-            else:
-                predictions.append(0)
-        return np.array(predictions)
+    # submission: put zeros and ones
+    if submission == True:
+        if is_LR == True:
+            predictions = []
+            for i in range(tx.shape[0]):
+                pred = sigmoid(tx[i,].dot(w))
+                if pred > 0.5:
+                    predictions.append(1)
+                else:
+                    predictions.append(-1)
+            return np.array(predictions)
 
+        else:
+            y_pred = np.dot(tx, w)
+            y_pred[np.where(y_pred <= 0.5)] = -1
+            y_pred[np.where(y_pred > 0.5)] = 1
+            return y_pred
     else:
-        y_pred = np.dot(tx, w)
-        y_pred[np.where(y_pred <= 0.5)] = 0
-        y_pred[np.where(y_pred > 0.5)] = 1
-        return y_pred
+        if is_LR == True:
+            predictions = []
+            for i in range(tx.shape[0]):
+                pred = sigmoid(tx[i,].dot(w))
+                if pred > 0.5:
+                    predictions.append(1)
+                else:
+                    predictions.append(0)
+            return np.array(predictions)
+
+        else:
+            y_pred = np.dot(tx, w)
+            y_pred[np.where(y_pred <= 0.5)] = 0
+            y_pred[np.where(y_pred > 0.5)] = 1
+            return y_pred
+
