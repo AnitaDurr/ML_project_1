@@ -88,7 +88,6 @@ def cv_reg_log(hprange, loss_l0, loss_l10, loss_l20):
 
 ### SCRIPT
 
-# will be commented as this script will be called from run.py where this global variable is defined DONE
 DATA_TRAIN_PATH = 'data/train.csv'
 print('===LOADING DATA===')
 y, tx, ids = load_clean_data(DATA_TRAIN_PATH)
@@ -176,7 +175,7 @@ t2 = time.time()
 print("time:", t2 - t1, "Regularized logistic regression best gamma:", reg_best_gamma, ' ,best lambda:', reg_best_lambda)
 
 # plot
-# cv_reg_log(gammas, log_loss_te, loss_l10, loss_l20)
+cv_reg_log(gammas, log_loss_te, loss_l10, loss_l20)
 
 logistic_args = [w_initial, max_iters, log_best_gamma]
 reg_log_args = [w_initial, reg_best_lambda, max_iters, reg_best_gamma]
