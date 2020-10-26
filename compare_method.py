@@ -68,5 +68,6 @@ for i in range(6):
     if np.mean(accuracy) > best_accuracy:
         best_accuracy = np.mean(accuracy)
         best_method = method
+        best_args = args
 
 create_boxplot(criterions_df, methods)
