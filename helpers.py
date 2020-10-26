@@ -136,7 +136,7 @@ def compute_criterions(y, x, weights, method):
 
     return accuracy, precision, recall, f1_score
 
-def predict_labels(w, tx, is_LR == False):
+def predict_labels(w, tx, is_LR=False):
     """
     Generates class predictions given weights, and a test data matrix
     """
