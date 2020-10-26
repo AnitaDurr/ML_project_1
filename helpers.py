@@ -152,36 +152,23 @@ def predict_labels(w, tx, is_LR=False, submission=False):
     Generates class predictions given weights, and a test data matrix
     """
     # submission: put zeros and ones
+    lower = 0
+    upper = 1
     if submission == True:
-        if is_LR == True:
-            predictions = []
-            for i in range(tx.shape[0]):
-                pred = sigmoid(tx[i,].dot(w))
-                if pred > 0.5:
-                    predictions.append(1)
-                else:
-                    predictions.append(-1)
-            return np.array(predictions)
+        lower = -1
 
-        else:
-            y_pred = np.dot(tx, w)
-            y_pred[np.where(y_pred <= 0.5)] = -1
-            y_pred[np.where(y_pred > 0.5)] = 1
-            return y_pred
+    if is_LR == True:
+        predictions = []
+        for i in range(tx.shape[0]):
+            pred = sigmoid(tx[i,].dot(w))
+            if pred > 0.5:
+                predictions.append(upper)
+            else:
+                predictions.append(lower)
+        return np.array(predictions)
+
     else:
-        if is_LR == True:
-            predictions = []
-            for i in range(tx.shape[0]):
-                pred = sigmoid(tx[i,].dot(w))
-                if pred > 0.5:
-                    predictions.append(1)
-                else:
-                    predictions.append(0)
-            return np.array(predictions)
-
-        else:
-            y_pred = np.dot(tx, w)
-            y_pred[np.where(y_pred <= 0.5)] = 0
-            y_pred[np.where(y_pred > 0.5)] = 1
-            return y_pred
-
+        y_pred = np.dot(tx, w)
+        y_pred[np.where(y_pred <= 0.5)] = lower
+        y_pred[np.where(y_pred > 0.5)] = upper
+        return y_pred
