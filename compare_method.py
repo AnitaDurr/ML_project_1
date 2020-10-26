@@ -61,6 +61,7 @@ k_indices = build_k_indices(y, k_fold, seed)
 
 # add arguments for your functions (shoudl actually be variables defined at the enf of the hyperparam tuning)
 methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
+method_names = ['LS GD', 'LS SGD', 'LS NE', 'RR NE', 'LOG GD', 'REG LOG GD']
 arguments = [lsGD_args, lsSGD_args, [], rr_args, logistic_args, reg_log_args]
 
 if test_weights_cv:
@@ -89,4 +90,4 @@ for i in range(6):
 print("===BEST METHOD===")
 print('Best method:', best_method.__name__)
 print('Best parameters:', best_args)
-create_boxplot(criterions_df, methods)
+create_boxplot(criterions_df, method_names)
