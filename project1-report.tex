@@ -21,69 +21,69 @@
 
 \begin{document}
 	\title{Machine Learning Project $1$}
-
+	
 	\author{Massimo Bourquin \and Anita D\" urr \and Natasa Kr\v co}
-
+	
 	\maketitle
-
+	
 	\section{Introduction}
-
+	
 	Classification is a common problem in Machine Learning. It can be either supervised, where the aim is to highlight the difference between groups by showing how well they can be separated (e.g. random forests, logistic regressions, etc.), or unsupervised, where the aim is to create data-driven groups in the data, i.e. clusters.
-
+	
 	In this paper, we will give a few possible solutions to the problem of detecting the Higgs boson. We used a CERN Higgs Boson dataset, with $250000$ training data points, and $568238$ test data points, where each data point has 30 features. Because the problem is concerned with detecting the Higgs Boson, the label has two possible values - “s”, when a Higgs Boson has been detected (signal), and “b”, otherwise (“background”). In our implementation, we have replaces the “s” and “b” values with 1 and 0, respectively.
 	Here we aim to test different Machine Learning methods on the train dataset, in order to predict the labels for the test dataset.
-
-
+	
+	
 	\section{Methods}
 	For this project, we assessed the accuracy of 6 different Machine Learning methods, namely Least squares using gradient descent, Least squares using stochastic gradient descent, Least squares using normal equations, Ridge regression using normal equations, Logistic regression using stochastic gradient descent and Penalised logistic regression using stochastic gradient descent. The aim was to develop the best predictor using the training dataset and to then apply the method to the test dataset.
-	In order to optimize the methods, we first did some data processing, and then focused on the actual methods, that is, tried to find the best values for the hyperparameters in order to get as precise a model as possible. After finding the best hyperparameter value for each method, we compared the methods and chose the best one, which we used to predict the labels for the test data. To find the best values for the hyperparameters, we tried values in a defined range for each hyperparameter:
-
-		\begin{itemize}
-			\item Least Squares Gradient Descent $\gamma \in [10^{-10}, 10^{-1}]$
-			\item Least Squares Stochastic Gradient Descent $\gamma \in [10^{-10}, 10^{-1}]$
-			\item Least Squares Normal Equations $\lambda \in [0.1, 10]$
-			\item Logistic Regression $\gamma \in [10^{-12}, 10^{-4.7}]$, $\lambda \in \{1, 5, 10, 15, 20\} $
-		\end{itemize}
-
-
+	In order to optimize the methods, we first did some data processing, and then tried to find the best values for the hyperparameters in order to get as precise a model as possible. Following this, we compared the methods and chose the best one, which we used to predict the labels for the test data. To find the best values for the hyperparameters, we tried values in a defined range for each hyperparameter:
+	
+	\begin{itemize}
+		\item Least Squares Gradient Descent $\gamma \in [10^{-10}, 10^{-1}]$
+		\item Least Squares Stochastic Gradient Descent $\gamma \in [10^{-10}, 10^{-1}]$
+		\item Least Squares Normal Equations $\lambda \in [0.1, 10]$
+		\item Logistic Regression $\gamma \in [10^{-12}, 10^{-4.7}]$, $\lambda \in \{1, 5, 10, 15, 20\} $
+	\end{itemize}
+	
+	
 	\subsection{Data Cleaning and Feature Selection}
 	The data cleaning consisted of replacing missing values ($-999$) by the feature mean and normalizing the data.
 	\\
 	We used a correlation-based feature selection. For this, Pearson’s correlation between the features, and of the features with the label was computed. For all pairs of features having a high correlation ($> 0.9$), we removed the one having the lowest correlation with the prediction (label).
-
+	
 	\subsection{Grid-search hyperparameter optimisation}
-	In this project, we decided to focus on optimizing the gamma and lambda hyperparameters. As for initial weights and maximum number of iterations, we decided to use fixed values for those: $0$ for initial weights, and $1000$ for maximum number of iterations, in order to be able to execute the program in a reasonable amount of time. Had we been able to parallelize the process, that is, use a much higher number of iterations, we would have been able to get a better idea of how the loss changes with gamma, which could have lead to better result.
-
+	In this project, we decided to focus on optimizing the gamma and lambda hyperparameters. As for cross-validation ratios, initial weights and maximum number of iterations, we decided to use fixed values for those: $0$ for initial weights, and $1000$ for maximum number of iterations, in order to be able to execute the program in a reasonable amount of time. Had we been able to parallelize the process, that is, use a much higher number of iterations, we would have been able to get a better idea of how the loss changes with gamma, which could have lead to better result.
+	
 	We searched for the best values using grid search for every hyperparameter. Each method was then tested using $4$-fold cross validation. The loss was averaged between the trials, and the best parameter (for $1$-parameter optimisation) or the best combination of parameters (for $2$-parameters penalised logistic regression optimisation) was kept. Figure $1$ shows the results.
-
-	\begin{figure}\label{fig1}
+	
+	\begin{figure}[h]
+		\label{fig1}
 		\centering
 		\includegraphics[scale = 0.15]{tunehyp.png}
 		\caption{Comparing loss to hyperparameter values:
 			(A) - train and test errors (MSE) vs gamma values for GD and SGD after $1000$ iterations;
 			(B) - train and test errors (RMSE) vs lambda values for Ridge Regression;
-			(C) and (D) - Normalized Negative Log-Likelihood with gamma values, with (C) presenting Logistic Regression, and (D) Regularized Logistic Regression.}
+			(C) and (D) - Normalized Negative Log-Likelihood with gamma values, with (C) presenting Logistic Regression, and (D) Regularized Logistic Regression.
+		(As test and train errors are very close, the lines are overlapping for the whole domain and may be less visible)}
 	\end{figure}
-
-
-
+	
+	
 	\section{Results}
 	After finding the best hyperparameter values for each method, we evaluated each method by computing accuracy, precision, recall and f1-score. We calculated these criteria using $4$-fold cross-validation, which we found to give the best results. To choose the best model, we used a boxplot of the results of the evaluation (see Figure 2).
-
+	
 	\begin{figure}[h]
 		\centering
 		\includegraphics[scale = 0.15]{comparemeth.png}
-		\caption{Comparing the methods}\label{boxplot}
+		\caption{Comparing the methods' accuracy, precision, recall, and f-$1$ score}\label{boxplot}
 	\end{figure}
-
-	After analysing each method, we found that all methods using Normal Equations were not very accurate. However, this is not surprising, considering that linear classifiers are not appropriated for binary classification problems. This is reflected by the high number of false negative we found with this methods, shown by a low recall in \ref{boxplot}.
-	Additionally, we found that penalisation did not yield better results, as our dataset only had $30$ features, which is not such a high number that it should affect the algorithm. To that point, for Regularized Logistic Regression, we found that the gamma parameter had a far stronger influence than lambda.
-
-	In conclusion, we found the best method to be Logistic Regression, as it was designed specifically for binary classification, and does not use a penalised cost function (which we found to be unnecessary in this particular problem).
-
+	
+	After analysing each method, we found that methods using Normal Equations were not very accurate. However, this is not surprising, considering that linear classifiers are not appropriate for binary classification problems. This is reflected by the high number of false negatives, shown by a low recall in \ref{boxplot}. Additionally, we found that penalisation did not yield better results, as our dataset only had $30$ features, which is not such a high number that it should affect the algorithm. To that point, for Regularized Logistic Regression, we found that the gamma parameter had a far stronger influence than lambda.
+	
+	In conclusion, we found the best method to be Logistic Regression, as it was designed specifically for binary classification, and does not use a penalised cost function (which we found to be unnecessary in this particular problem). When analysed on the training data, it was shown to have accuracy $0.74$ and f-$1$ score $0.66$.
+	
 	\begin{thebibliography}{9}
 		\bibitem{feature} https://machinelearningmastery.com/discover-feature-engineering-how-to-engineer-features-and-how-to-get-good-at-it/
-
+		
 		\bibitem{ng} http://cs229.stanford.edu/materials/ML-advice.pdf
 	\end{thebibliography}
 \end{document}
