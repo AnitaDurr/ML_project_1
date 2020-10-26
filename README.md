@@ -1,29 +1,6 @@
 # Classification on the CERN Higgs Boson dataset
 
 
-
-## Still need to be done:
-
-- [x] keep only 1 predict label function (use flag for the log regression case)
-- [x] tune hyperparam and plot for
-  - [x] ridge regression
-  - [x] regularized logistic regression
-- [x] compare the methods:
-  - [x] compute the 4 criterions for all methods (done for least square GD and SGD)
-  - [x] boxplot the result
-  - [x] select best model
-- [ ] predict the test labels
-- [ ] submit our predict.csv file to aircrowd
-- [ ] finish report
-	- [ ] legend for the plots
-	- [ ] change information about the ranges, max iter, kfold etc
-	- [ ] explain why log reg is better (linear methods not appropriate for binary classification)
-	- [ ] why penalized not good
-	- [ ] that our results are affected by our choice of max iter and inti w
-	- [ ] our results are also bounded by runing with 2 core and not paralellized and reasonable time
-- [ ] clean this section of the file once everything is ticked
-- [ ] submit the project
-
 ## What is this project about ?
 This project is part of the machine learning course [CS-433](https://www.epfl.ch/labs/mlo/machine-learning-cs-433/) given at EPFL during Fall 2020, which we (Bourquin Massimo, Dürr Anita and Krco Natasa.) are following during Fall 2020. With this project, we are introduced to basic concepts of machine learning regarding classification problems.
 
