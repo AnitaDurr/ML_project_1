@@ -54,7 +54,7 @@
 	\subsection{Grid-search hyperparameter optimisation}
 	In this project, we decided to focus on optimizing the gamma and lambda hyperparameters. As for initial weights and maximum number of iterations, we decided to use fixed values for those: $0$ for initial weights, and $1000$ for maximum number of iterations, in order to be able to execute the program in a reasonable amount of time. Had we been able to parallelize the process, that is, use a much higher number of iterations, we would have been able to get a better idea of how the loss changes with gamma, which could have lead to better result.
 
-	We searched for the best values using grid search for every hyperparameter. Each method was then tested using $4$-fold cross validation. The loss was averaged between the trials and the best parameter (for $1$-parameter optimisation) or the best combination of parameters (for $2$-parameters penalised logistic regression optimisation) was kept. Figure $1$ shows the results.
+	We searched for the best values using grid search for every hyperparameter. Each method was then tested using $4$-fold cross validation. The loss was averaged between the trials, and the best parameter (for $1$-parameter optimisation) or the best combination of parameters (for $2$-parameters penalised logistic regression optimisation) was kept. Figure $1$ shows the results.
 
 	\begin{figure}\label{fig1}
 		\centering
