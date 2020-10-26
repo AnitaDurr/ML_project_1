@@ -152,10 +152,10 @@ def predict_labels(w, tx, is_LR=False, submission=False):
     Generates class predictions given weights, and a test data matrix
     """
     # submission: put zeros and ones
-    lower = -1
+    lower = 0
     upper = 1
     if submission == True:
-        lower = 0
+        lower = -1
 
     if is_LR == True:
         predictions = []
