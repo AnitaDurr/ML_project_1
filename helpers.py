@@ -112,37 +112,46 @@ def neg_log_likelihood(y, tx, w):
     loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
     return np.squeeze(- loss)
 
-def compute_criterions(y, x, weights):
-    predictions = predict_labels(weights, x)
+def compute_criterions(y, x, weights, method):
+    if method.__name__ in ['logistic_regression', 'reg_logistic_regression']:
+        predictions = predict_labels(weights, x, is_LR = True)
+    else:
+        predictions = predict_labels(weights, x, is_LR = False)
 
     true_positives = len([i for i in range(len(y)) if (predictions[i] == 1 and y[i] == 1)])
     false_positives = len([i for i in range(len(y)) if (predictions[i] == 1 and y[i] == 0)])
     true_negatives = len([i for i in range(len(y)) if (predictions[i] == 0 and y[i] == 0)])
     false_negatives = len([i for i in range(len(y)) if (predictions[i] == 0 and y[i] == 1)])
 
-    accuracy = (true_positives + true_negatives) / (true_positives + false_positives + true_negatives + false_negatives)
-    precision = true_positives / (true_positives + false_positives)
-    recall = true_positives / (true_positives + false_negatives)
-    f1_score = 2 * ((precision * recall) / (precision + recall))
+    try:
+        accuracy = (true_positives + true_negatives) / (true_positives + false_positives + true_negatives + false_negatives)
+        precision = true_positives / (true_positives + false_positives)
+        recall = true_positives / (true_positives + false_negatives)
+        f1_score = (2 * precision * recall) / (precision + recall)
+    except:
+        accuracy = np.nan
+        precision = np.nan
+        recall = np.nan
+        f1_score = np.nan
 
     return accuracy, precision, recall, f1_score
 
-
-### to be fusionned !!!
-
-def calculate_predictions_log(tx, w):
-    predictions = []
-    for i in range(tx.shape[0]):
-        pred = sigmoid(tx[i,].dot(w))
-        predictions.append(int(pred > 0.5))
-    return np.array(predictions)
-
-def predict_labels(weights, data):
+def predict_labels(w, tx, is_LR == False):
     """
     Generates class predictions given weights, and a test data matrix
     """
-    y_pred = np.dot(data, weights)
-    y_pred[np.where(y_pred <= 0.5)] = 0
-    y_pred[np.where(y_pred > 0.5)] = 1
+    if is_LR == True:
+        predictions = []
+        for i in range(tx.shape[0]):
+            pred = sigmoid(tx[i,].dot(w))
+            if pred > 0.5:
+                predictions.append(1)
+            else:
+                predictions.append(0)
+        return np.array(predictions)
 
-    return y_pred
+    else:
+        y_pred = np.dot(tx, w)
+        y_pred[np.where(y_pred <= 0.5)] = 0
+        y_pred[np.where(y_pred > 0.5)] = 1
+        return y_pred
