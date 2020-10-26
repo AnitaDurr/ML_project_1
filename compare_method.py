@@ -45,15 +45,29 @@ def create_boxplot(criterions, methods):
     ax.set_xticks(xticks)
     plt.savefig('Classifiers_comparison.pdf')
 
+def check_convergence(method1, method2, args1, args2):
+    weight1, _ = method1(y, tx, *args1)
+    weight2, _ = method1(y, tx, *args2)
+    return np.linalg.norm(weight2 - weight1)
+
 print("===COMPARE METHODS===")
+
+test_weights_cv = True
+
+seed = 42
+k_fold = 4
+k_indices = build_k_indices(y, k_fold, seed)
 
 # add arguments for your functions (shoudl actually be variables defined at the enf of the hyperparam tuning)
 methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression, logistic_regression, reg_logistic_regression]
 arguments = [lsGD_args, lsSGD_args, [], rr_args, logistic_args, reg_log_args]
 
-seed = 42
-k_fold = 4
-k_indices = build_k_indices(y, k_fold, seed)
+if test_weights_cv:
+    print("Following distances between weigths should be small:")
+    for i in range(3):
+        method1, method2 = methods[i], methods[i+1]
+        args1, args2 =  arguments[i], arguments[i+1]
+        print(check_convergence(method1, method2, args1, args2))
 
 criterions_df = []
 best_accuracy = 0

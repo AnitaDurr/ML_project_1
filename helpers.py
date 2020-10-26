@@ -37,9 +37,9 @@ def standardize(x):
 def pearson(X, Y):
     return np.cov(X, Y)[0, 1] / (np.std(X) * np.std(Y))
 
-def load_clean_data(file):
+def load_clean_data(file, sub_sample=False):
     print('Loading data...')
-    y, X, ids = load_csv_data(file, sub_sample=True)
+    y, X, ids = load_csv_data(file, sub_sample)
 
     # Data cleaning
     print('Handling missing values...')

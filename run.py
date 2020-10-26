@@ -3,13 +3,7 @@
 
 from implementations import *
 from helpers import *
-
-# load training data into class labels, feature matrix and event ids
-# DATA_TRAIN_PATH = 'data/train.csv'
-# print('===LOADING DATA===')
-# y, tx, ids = load_clean_data(DATA_TRAIN_PATH)
-
-from compare_method import * 		# this will execute the compare_method script
+from compare_method import *
 
 weights = best_method(y, tx, best_args)
 

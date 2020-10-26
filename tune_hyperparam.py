@@ -175,7 +175,8 @@ t2 = time.time()
 # find best gamma in reg
 print("time:", t2 - t1, "Regularized logistic regression best gamma:", reg_best_gamma, ' ,best lambda:', reg_best_lambda)
 
-cv_reg_log(gammas, log_loss_te, loss_l10, loss_l20)
+# plot
+# cv_reg_log(gammas, log_loss_te, loss_l10, loss_l20)
 
 logistic_args = [w_initial, max_iters, log_best_gamma]
 reg_log_args = [w_initial, reg_best_lambda, max_iters, reg_best_gamma]
