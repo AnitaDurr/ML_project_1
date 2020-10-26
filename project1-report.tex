@@ -35,36 +35,16 @@
 	
 	
 	\section{Methods}
-	For this project, we will assess the accuracy of 6 different Machine Learning methods, namely Least squares using gradient descent, Least squares using stochastic gradient descent, Least squares using normal equation, Ridge regression using normal equations, Logistic regression using stochastic gradient descent and Penalised logistic regression using stochastic gradient descent (table 1). The aim is to develop the best predictor using the training dataset and to then apply the method to the test dataset.
-	In order to optimize the methods, we first did some data processing, and then focused on the actual methods, that is, tried to find the best values for the hyperparameters in order to get as precise a model as possible. After finding the best hyperparameter value for each method, we compared the methods and chose the best one, which we used to predict the labels for the test data.
+	For this project, we assessed the accuracy of 6 different Machine Learning methods, namely Least squares using gradient descent, Least squares using stochastic gradient descent, Least squares using normal equations, Ridge regression using normal equations, Logistic regression using stochastic gradient descent and Penalised logistic regression using stochastic gradient descent. The aim was to develop the best predictor using the training dataset and to then apply the method to the test dataset.
+	In order to optimize the methods, we first did some data processing, and then focused on the actual methods, that is, tried to find the best values for the hyperparameters in order to get as precise a model as possible. After finding the best hyperparameter value for each method, we compared the methods and chose the best one, which we used to predict the labels for the test data. To find the best values for the hyperparameters, we tried values in a defined range for each hyperparameter:
 	
-%	$
-	%\begin{array}{|c|c|c|}
-	%	\textbf{Method} & \textbf{Optimisation algorithms} & \textbf{Hyperparameters to optimise} \\
-	%	\hline
-	%	\text{Least squares} &	\text{Gradient descent} &	\text{Step size (gamma)} \\ \text{Try values in range [10^-10, 10^-1]}
-	%\end{array}
-	%$
+		\begin{itemize}
+			\item Least Squares Gradient Descent $\gamma \in [10^{-10}, 10^{-1}]$
+			\item Least Squares Stochastic Gradient Descent $\gamma \in [10^{-10}, 10^{-1}]$
+			\item Least Squares Normal Equations $\lambda \in [0.1, 10]$
+			\item Logistic Regression $\gamma \in [10^{-12}, 10^{-4.7}]$, $\lambda \in \{1, 5, 10, 15, 20\} $
+		\end{itemize}
 	
-	$$
-	\begin{array}{|c|c|c|}
-	\hline
-	\textbf{Method} & \textbf{Optimisation algorithms} & \textbf{Hyperparameters} \\
-	\hline
-	\text{Least squares} & \text{Gradient descent} & \text{Step size (gamma)} \\
-	\hline
-	\text{Least squares} & \text{Stochastic gradient descent} &\text{Step size (gamma)} \\
-	\hline
-	\text{Least squares} & \text{Normal equations} & \text{No hyperparameter} \\
-	\hline
-	\text{Ridge regression} & \text{Normal equations} & \text{Penalisation parameter (lambda)} \\
-	\hline
-	\text{Logistic regression} & \text{Gradient descent} & \text{Step size (gamma)} \\
-	\hline
-	\text{Penalised logistic regression} & \text{Gradient descent} & \text{Step size and penalisation parameter} \\
-	\hline
-	\end{array}
-	$$
 	
 	\subsection{Data Cleaning and Feature Selection}
 	The data cleaning consisted of replacing missing values ($-999$) by the feature mean.
@@ -72,24 +52,28 @@
 	We used a correlation-based feature selection. For this, Pearson’s correlation between the features, and of the features with the label was computed. For all pairs of features having a high correlation ($> 0.9$), we removed the one having the lowest correlation with the prediction (label).
 	
 	\subsection{Grid-search hyperparameter optimisation}
-	In this project, we decided to focus on optimizing the gamma and lambda hyperparameters. As for initial weights and maximum number of iterations, we decided to use fixed values for those: \begin{itemize}
-		\item Initial weights: $0$
-		\item Maximum iterations: $1000$
-	\end{itemize}
+	In this project, we decided to focus on optimizing the gamma and lambda hyperparameters. As for initial weights and maximum number of iterations, we decided to use fixed values for those: $0$ for initial weights, and $1000$ for maximum number of iterations, in order to be able to execute the program in a reasonable amount of time. Had we been able to paralelize the process, that is, use a much higher number of iterations, we probably would have gotten better results from the methods using SGD.
 
-	We searched for the best values using grid search for every hyperparameter. For lambda, we tested 20 integers as the value, while for gamma, we considered $20$ floats in log space, in the range $ [ 10^{-10}, 10^{-1}]$. Each method was then tested on this grid space using a $5$-fold cross validation. The loss was averaged between the trials and the best parameter (for $1$-parameter optimisation) or the best combination of parameters (for $2$-parameters penalised logistic regression optimisation) was kept. The results were visualised using either line plots comparing loss to the hyperparameter ($1$-parameter optimisation) or heatmaps ($2$-parameter optimisation), with the mean loss on the $Z$ axis. The 
+	We searched for the best values using grid search for every hyperparameter. For lambda, we tested 20 integers as the value, while for gamma, we considered $20$ floats in log space, in the range $ [ 10^{-10}, 10^{-1}]$. Each method was then tested on this grid space using a $4$-fold cross validation. The loss was averaged between the trials and the best parameter (for $1$-parameter optimisation) or the best combination of parameters (for $2$-parameters penalised logistic regression optimisation) was kept. Figure $1$ shows the results - plot (A) shows comparison of train and test errors (MSE) with gamma values for Gradient Descent and Stochastic Gradient Descent after $1000$ iterations. Plot (B) compares train and test errors (RMSE) with lambda values for Ridge Regression. Plot (C) and (D) compare the Normalized Negative Log-Likelihood with gamma values, with (C) presenting Logistic Regression, and (D) Regularized Logistic Regression.
 	
-	\begin{figure}
+	\begin{figure}\label{fig1}
 		\centering
-		\includegraphics[scale = 0.2]{tunehyp.png}
+		\includegraphics[scale = 0.15]{tunehyp.png}
+		\caption{Comparing loss to hyperparameter values}
 	\end{figure}
 	
 	
 	
 	\section{Results}
-	After finding the best hyperparameter values for each method, we evaluated each method by computing accuracy, precision, recall and f1-score. We calculated these criterions using 4-fold cross-validation. To choose the best model, we used a boxplot of the results of the evaluation.
+	After finding the best hyperparameter values for each method, we evaluated each method by computing accuracy, precision, recall and f1-score. We calculated these criterions using $4$-fold cross-validation, which we founf to give the best results. To choose the best model, we used a boxplot the results of the evaluation (see Figure 2).
 	
-	Here, the best algorithm was shown to be Logistic Regression, with hyperparameter values VALUES.
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale = 0.15]{comparemeth.png}
+		\caption{Comparing the methods}
+	\end{figure}
+
+	After analysing each method, we found that all methods using Normal Equations were not very accurate. However, this is not surprising, considering that linear classifiers are not the best solutions to binary classification problems. Additionaly, we found that penalisation did not yield better results, as our dataset only had $30$ features, which is not such a high number that it should affect the algorithm. To that point, for Regularized Logistic Regression, we found that the gamma parameter had a far stronger influence than lambda.
 	
-	WHY
+	Finally, we found the best method to be Logistic Regression, as it yielded the highest precision and lowest loss of all the algorithms.
 \end{document}
