@@ -11,7 +11,6 @@ def compute_gradient(y, tX, w):
     e = y - tX.dot(w)
     return - tX.T.dot(e) / tX.shape[0]
 
-
 def least_squares_GD(y, tX, initial_w, max_iters, gamma):
 	"""
 	Linear regression (mse) using gradient descent.
@@ -72,7 +71,7 @@ def ridge_regression(y, tx, lambda_):
     w = np.linalg.solve(a,b)
 
     #compute the RMSE
-    loss = compute_rmse(y, tx, w)
+    loss = np.sqrt(compute_mse(y, tx, w))
 
     return w, loss
 
@@ -104,14 +103,13 @@ def reg_logistic_regression(y, tx, initial_w, lambda_ , max_iters, gamma):
     w = initial_w
 
     for iter in range(max_iters):
-	# compute the gradient, add penalty term and update w
-	pred = sigmoid(tx.dot(w))
-	grad = tx.T.dot(pred - y) + (2 * lambda_ * w)
-	w = w - gamma * grad
+        # compute the gradient, add penalty term and update w
+        pred = sigmoid(tx.dot(w))
+        grad = tx.T.dot(pred - y) + (2 * lambda_ * w)
+        w = w - gamma * grad
 
     # Calculate final loss, add penalty term
     pred = sigmoid(tx.dot(w))
-    loss = neg_log_likelihood(y, tx, w) + (lambda_ * np.squeeze(w.T.dot(w)))
+    # Here we return the unpenalised loss, in order to compare the loss for different lambdas
+    loss = neg_log_likelihood(y, tx, w) # + (lambda_ * np.squeeze(w.T.dot(w))) Here is the penalisation term if needed
     return w, loss
-
-
