@@ -5,6 +5,13 @@
 This project is part of the machine learning course [CS-433](https://www.epfl.ch/labs/mlo/machine-learning-cs-433/) given at EPFL during Fall 2020, which we (Bourquin Massimo, Dürr Anita and Krco Natasa.) are following during Fall 2020. With this project, we are introduced to basic concepts of machine learning regarding classification problems.
 
 
+## How to run the script ?
+
+Download the python scripts in your directory. Train and test datasets should be organized as *.csv* in a subdirectory *data*, i.e. so that their relative paths are *./data/train.csv* and *./data/test.csv*.
+
+Run the *run.py* file. The resulting test labels will appear in a *.csv* file : *./data/predict.csv*.
+
+
 ## What does your script do ?
 
 In this project, we compare different machine learning methods, by comparing their accuracy, precision, recall and f1-score on the train dataset. Once we selected the best method based on this criterions, we predict the labels of the test dataset and write them in a *.csv* file. This file was then uploaded on the [aircrowd challenge](https://www.aicrowd.com/challenges/epfl-machine-learning-higgs) corresponding to this project.
@@ -47,9 +54,3 @@ We boxplot the result in order to choose the best model.
 ### Step 3 : predict the test labels
 
 This chosen model is finally used to predict the labels of the test dataset. This is simply done by calling the function with the test observations (and of course the tuned hyperparameter(s)).
-
-## How to run the script ?
-
-Download the python scripts in your directory. Train and test datasets should be organized as *.csv* in a subdirectory *data*, i.e. so that their relative paths are *./data/train.csv* and *./data/test.csv*.
-
-Run the *run.py* file. The resulting test labels will appear in a *.csv* file : *./data/predict.csv*.
