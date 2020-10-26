@@ -64,7 +64,7 @@ methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression,
 arguments = [lsGD_args, lsSGD_args, [], rr_args, logistic_args, reg_log_args]
 
 if test_weights_cv:
-    print("[Following distances between weigths should be small]")
+    print("If the following distances between weigths are smalle, we consider that the optimization methods converge to the same weights.")
     for i in range(3):
         method1, method2 = methods[i], methods[i+1]
         args1, args2 =  arguments[i], arguments[i+1]
