@@ -6,6 +6,7 @@ from implementations import *
 from cross_validation import *
 from helpers import *
 import time
+import seaborn as sns
 
 
 def tune_hyperparam(y, x, k_fold, seed, hprange, method, args, compute_loss):
@@ -45,41 +46,58 @@ def cv_ls_gd_sgd(hprange, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd):
 	plt.title(title)
 	plt.legend(loc=2)
 	plt.grid(True)
-	plt.savefig("GD_SGD")
+	plt.savefig("GD_SGD.pdf")
 	plt.close()
-	
-def cv_ls_rr(lambda_range, loss_tr, loss_te):
-    plt.figure()
-    plt.plot(lambda_range, loss_tr, marker = ".", color = 'b', label = 'RR test error')
-    plt.plot(lambda_range, loss_te, marker = ".", color = 'c', label = 'RR test error')
-    plt.xlabel("lambda")
-    plt.ylabel("rmse loss")
-    plt.title("Tuning lambda for Least Squares Ridge Regression")
-    plt.grid(True)
-    plt.savefig("RR")
-    plt.close()
 
-def cv_log_reg(gamma_range, lambda_range, loss_df, filename, plot_title):
-	ax = plt.axes()
-	sns.heatmap(loss_df, ax = ax)
-	ax.set_title(plot_title)
-	ax.set_xticklabels([str(i) for i in gamma_range])
-	ax.set_yticklabels([str(i) for i in lambda_range])
-	plt.savefig(filename)
+def cv_ls_rr(lambda_range, loss_tr, loss_te):
+	plt.figure()
+	plt.plot(lambda_range, loss_tr, marker = ".", color = 'b', label = 'Train error')
+	plt.plot(lambda_range, loss_te, marker = ".", color = 'r', label = 'Test error')
+	plt.xlabel("lambda")
+	plt.ylabel("rmse loss")
+	plt.title("Tuning lambda for Least Squares Ridge Regression")
+	plt.legend(loc=2)
+	plt.grid(True)
+	plt.savefig("RR.pdf")
+	plt.close()
+
+def cv_gam_log(hprange, loss_tr, loss_te):
+	plt.figure()
+	plt.semilogx(hprange, loss_tr, marker=".", color='b', label='Train error')
+	plt.semilogx(hprange, loss_te, marker=".", color='r', label='Test error')
+	plt.xlabel("gamma")
+	plt.ylabel("Normalised -log likelihood loss")
+	plt.title("Tuning gamma for Logistic regression")
+	plt.legend(loc=2)
+	plt.grid(True)
+	plt.savefig("Gamma_logistic.pdf")
+	plt.close()
+
+def cv_reg_log(hprange, loss_l0, loss_l10, loss_l20):
+	plt.figure()
+	plt.semilogx(hprange, loss_l0, marker=".", color='b', label='Lambda=0')
+	plt.semilogx(hprange, loss_l10, marker=".", color='c', label='Lambda=10')
+	plt.semilogx(hprange, loss_l20, marker=".", color='m', label='Lambda=20')
+	plt.xlabel("gamma")
+	plt.ylabel("Normalised -log likelihood loss")
+	plt.title("Tuning lambda for Regularised logistic regression (CV test losses)")
+	plt.legend(loc=2)
+	plt.grid(True)
+	plt.savefig("Lambda_reg_log.pdf")
 	plt.close()
 
 ### SCRIPT
 
-# will be commented as this script will be called from run.py where this global variable is defined
+# will be commented as this script will be called from run.py where this global variable is defined DONE
 DATA_TRAIN_PATH = 'data/train.csv'
 print('===LOADING DATA===')
-y, x, ids = load_clean_data(DATA_TRAIN_PATH)
+y, tx, ids = load_clean_data(DATA_TRAIN_PATH)
 
 print('===TUNE HYPERPARAMETERS===')
 
 seed = 7
 k_fold = 4
-w_initial = np.zeros(x.shape[1])
+w_initial = np.zeros(tx.shape[1])
 max_iters = 1000
 
 ### LEAST SQUARE GD AND SGD
@@ -89,7 +107,7 @@ print("[least square GD]", end=" ")
 
 
 t1 = time.time()
-best_GD_gamma, loss_tr_gd, loss_te_gd = tune_hyperparam(y, x, k_fold, seed, hprange=gammas, method=least_squares_GD, args=[w_initial, max_iters], compute_loss=compute_mse)
+best_GD_gamma, loss_tr_gd, loss_te_gd = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=least_squares_GD, args=[w_initial, max_iters], compute_loss=compute_mse)
 t2 = time.time()
 print("time:", t2 - t1, "best gamma:", best_GD_gamma)
 lsGD_args = [w_initial, max_iters, best_GD_gamma]
@@ -97,7 +115,7 @@ lsGD_args = [w_initial, max_iters, best_GD_gamma]
 print("[least square SGD]", end=" ")
 
 t1 = time.time()
-best_SGD_gamma, loss_tr_sgd, loss_te_sgd = tune_hyperparam(y, x, k_fold, seed, hprange=gammas, method=least_squares_SGD, args=[w_initial, max_iters], compute_loss=compute_mse)
+best_SGD_gamma, loss_tr_sgd, loss_te_sgd = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=least_squares_SGD, args=[w_initial, max_iters], compute_loss=compute_mse)
 t2 = time.time()
 print("time:", t2 - t1, "best gamma:", best_SGD_gamma)
 lsSGD_args = [w_initial, max_iters, best_SGD_gamma]
@@ -107,12 +125,12 @@ cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
 
 ### LEAST SQUARE RIDGE REGRESSSION
 
-lambdas = np.arange(0.0, 10.0, 0.1)
+lambdas = np.arange(0, 10, 0.1)
 
 print("[Ridge Regression]", end=" ")
 
 t1 = time.time()
-best_RR_lambda, loss_tr_rr, loss_te_rr = tune_hyperparam(y, x, k_fold, seed, hprange=lambdas, method=ridge_regression, args = [], compute_loss=compute_rmse)
+best_RR_lambda, loss_tr_rr, loss_te_rr = tune_hyperparam(y, tx, k_fold, seed, hprange=lambdas, method=ridge_regression, args = [], compute_loss=compute_mse)
 t2 = time.time()
 print("time:", t2 - t1, "best lambda:", best_RR_lambda)
 rr_args = [best_RR_lambda]
@@ -123,53 +141,49 @@ cv_ls_rr(lambdas, loss_tr_rr, loss_te_rr)
 ### LOGISTIC REGRESSION
 # logistic == logistic regression
 # reg_log == regularized logistic regression
-k_fold = 5
-seed = 7
-lambdas = np.arange(0, 21, 20)
-gammas = np.logspace(-12, -5, num=20)
-w_initial = np.zeros(x.shape[1])
-max_iters = 100
+lambdas = np.arange(0, 21, 5)
+gammas = np.logspace(-12, -4.7, num=12)
 
 print("[Logistic regressions]", end=" ")
 
 t1 = time.time()
 
 # For this one we have to tune both gammas and lambdas.
-# We use one for both and compute the best gamma after the lambda_ == 0 iteration for simple logistic regression
+# lambda_ == 0 corresponds to logistic regression, thus if lambda_ == 0: keep the values and get best gamma
 # Then continue the iterations for penalised logistic regression
 for lambda_ in lambdas:
 	if lambda_ == 0:
-		log_best_gamma, log_loss_tr, log_loss_te = tune_hyperparam(y, x, k_fold, seed, hprange=gammas, method=logistic_regression, args=[w_initial, max_iters], compute_loss=neg_log_likelihood)
+		log_best_gamma, log_loss_tr, log_loss_te = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=logistic_regression, args=[w_initial, max_iters], compute_loss=neg_log_likelihood)
 		# First iteration: creates numpy arrays that will become data frames for heatmaps
-		reg_loss_tr_df = log_loss_tr
-		reg_loss_te_df = log_loss_te
 		t2 = time.time()
 		print("time:", t2 - t1, "Logistic regression best gamma:", log_best_gamma)
-		# Start storing best values to keep the best one over lambda iterations
-		reg_best_gamma = 0
+		# Start storing best values to keep the best gamma/lambda combination for reg. logistic
+		reg_best_gamma = log_best_gamma
 		reg_best_lambda = 0
 		reg_best_loss = np.argmin(log_loss_te)
+		# plots the loss for gamma comparison in logistic regression
+		cv_gam_log(gammas, log_loss_tr, log_loss_te)
 	else:
-		reg_best_gamma, reg_loss_tr, reg_loss_te = tune_hyperparam(y, x, k_fold, seed, hprange=gammas, method=reg_logistic_regression, args=[w_initial, lambda_, max_iters], compute_loss=neg_log_likelihood)
-		# Stack this lambda result to the data frames
-		reg_loss_tr_df = np.vstack((reg_loss_tr_df,reg_loss_tr))
-		reg_loss_te_df = np.vstack((reg_loss_te_df,reg_loss_te))
+		reg_lambda_best_gamma, reg_loss_tr, reg_loss_te = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=reg_logistic_regression, args=[w_initial, lambda_, max_iters], compute_loss=neg_log_likelihood)
 
+		# if statement to store the best lambda/gamma combination, if the loss is better than the previous best one
 		if np.argmin(reg_loss_tr) < reg_best_loss:
 			reg_best_loss = np.argmin(reg_loss_tr)
 			reg_best_lambda = lambda_
-			reg_best_gamma = gamma
+			reg_best_gamma = reg_lambda_best_gamma
+
+		# storing losses at lambda == 10 and 20 for plotting the lambda comparison
+		if lambda_ == 10:
+			loss_l10 = reg_loss_te
+		elif lambda_ == 20:
+			loss_l20 = reg_loss_te
+
 t3 = time.time()
 # find best gamma in reg
-print("time:", t3 - t1, "Regularized logistic regression best gamma:", reg_best_gamma)
-print(reg_loss_te_df)
-print(reg_loss_tr_df)
+print("[Regularized logistic regressions]", end=" ")
+print("time:", t3 - t1, "Regularized logistic regression best gamma:", reg_best_gamma, ' ,best lambda:', reg_best_lambda)
 
-cv_log_reg(gammas, lambdas, reg_loss_tr_df, 'Reg_log_train.pdf', '-log likelihood for reg. logistic regression: train data')
-cv_log_reg(gammas, lambdas, reg_loss_te_df, 'Reg_log_test.pdf', '-log likelihood for reg. logistic regression: test data')
+cv_reg_log(gammas, log_loss_te, loss_l10, loss_l20)
 
 logistic_args = [w_initial, max_iters, log_best_gamma]
-reg_log_args = [w_initial, max_iters, reg_best_gamma]
-
-
-
+reg_log_args = [w_initial, reg_best_lambda, max_iters, reg_best_gamma]
