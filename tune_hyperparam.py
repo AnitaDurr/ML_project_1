@@ -125,7 +125,7 @@ cv_ls_gd_sgd(gammas, loss_tr_gd, loss_te_gd, loss_tr_sgd, loss_te_sgd)
 
 ### LEAST SQUARE RIDGE REGRESSSION
 
-lambdas = np.arange(0, 10, 0.1)
+lambdas = np.arange(0.1, 10, 0.1)
 
 print("[Ridge Regression]", end=" ")
 
