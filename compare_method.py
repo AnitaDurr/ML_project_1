@@ -47,8 +47,9 @@ def create_boxplot(criterions, methods):
 
 def check_convergence(method1, method2, args1, args2):
     weight1, _ = method1(y, tx, *args1)
-    weight2, _ = method1(y, tx, *args2)
-    return np.linalg.norm(weight2 - weight1)
+    weight2, _ = method2(y, tx, *args2)
+    dist = np.linalg.norm(weight2 - weight1)
+    print("[{} vs. {}]".format(method1.__name__, method2.__name__), dist)
 
 print("===COMPARE METHODS===")
 
@@ -63,11 +64,11 @@ methods = [least_squares_GD, least_squares_SGD, least_squares, ridge_regression,
 arguments = [lsGD_args, lsSGD_args, [], rr_args, logistic_args, reg_log_args]
 
 if test_weights_cv:
-    print("Following distances between weigths should be small:")
+    print("[Following distances between weigths should be small]")
     for i in range(3):
         method1, method2 = methods[i], methods[i+1]
         args1, args2 =  arguments[i], arguments[i+1]
-        print(check_convergence(method1, method2, args1, args2))
+        check_convergence(method1, method2, args1, args2)
 
 criterions_df = []
 best_args = []
