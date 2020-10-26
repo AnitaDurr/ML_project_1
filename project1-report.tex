@@ -8,8 +8,15 @@
 \usepackage{hhline}
 \usepackage[dvipsnames]{xcolor}
 \usepackage[utf8x]{inputenc}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
 
 \renewcommand{\arraystretch}{2}
+\geometry{
+	a4paper,
+	total={170mm,257mm},
+	left=20mm,
+	top=20mm,
+}
 
 
 \begin{document}
@@ -70,14 +77,19 @@
 		\item Maximum iterations: $1000$
 	\end{itemize}
 
-	We searched for the best values using grid search for every hyperparameter. For lambda, we tested 20 integers as the value, while for gamma, we considered $20$ floats in log space, in the range $ [ 10^{-10}, 10^{-1}]$. Each method was then tested on this grid space using a $5$-fold cross validation. The loss was averaged between the trials and the best parameter (for $1$-parameter optimisation) or the best combination of parameters (for $2$-parameters penalised logistic regression optimisation) was kept. The results were visualised using either line plots comparing loss to the hyperparameter ($1$-parameter optimisation) or heatmaps ($2$-parameter optimisation), with the mean loss on the $Z$ axis.
+	We searched for the best values using grid search for every hyperparameter. For lambda, we tested 20 integers as the value, while for gamma, we considered $20$ floats in log space, in the range $ [ 10^{-10}, 10^{-1}]$. Each method was then tested on this grid space using a $5$-fold cross validation. The loss was averaged between the trials and the best parameter (for $1$-parameter optimisation) or the best combination of parameters (for $2$-parameters penalised logistic regression optimisation) was kept. The results were visualised using either line plots comparing loss to the hyperparameter ($1$-parameter optimisation) or heatmaps ($2$-parameter optimisation), with the mean loss on the $Z$ axis. The 
+	
+	\begin{figure}
+		\centering
+		\includegraphics[scale = 0.2]{tunehyp.png}
+	\end{figure}
 	
 	
 	
 	\section{Results}
-	After finding the best hyperparameter values for each method, we evaluated each method by computing accuracy, precision, recall and f1-score. We calculated these criterions using 4-fold cross-validation. To choose the best model, we used a boxplot the results of the evaluation.
+	After finding the best hyperparameter values for each method, we evaluated each method by computing accuracy, precision, recall and f1-score. We calculated these criterions using 4-fold cross-validation. To choose the best model, we used a boxplot of the results of the evaluation.
 	
-	Here, the best model was shown to be MODEL, with hyperparameter values VALUES.
+	Here, the best algorithm was shown to be Logistic Regression, with hyperparameter values VALUES.
 	
 	WHY
 \end{document}
