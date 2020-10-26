@@ -149,6 +149,9 @@ log_best_gamma, log_loss_tr, log_loss_te = tune_hyperparam(y, tx, k_fold, seed, 
 t2 = time.time()
 print("time:", t2 - t1, "Logistic regression best gamma:", log_best_gamma)
 
+cv_gam_log(gammas, log_loss_tr, log_loss_te)
+
+### REGuLARIZED LOGISTIC REGRESSION
 # For this one we have to tune both gammas and lambdas.
 print("[Regularized logistic regressions]", end=" ")
 
