@@ -105,7 +105,6 @@ gammas = np.logspace(-10, -1, num=20)
 
 print("[least square GD]", end=" ")
 
-
 t1 = time.time()
 best_GD_gamma, loss_tr_gd, loss_te_gd = tune_hyperparam(y, tx, k_fold, seed, hprange=gammas, method=least_squares_GD, args=[w_initial, max_iters], compute_loss=compute_mse)
 t2 = time.time()

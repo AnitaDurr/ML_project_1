@@ -39,7 +39,7 @@ def pearson(X, Y):
 
 def load_clean_data(file):
     print('Loading data...')
-    y, X, ids = load_csv_data(file, sub_sample=False)
+    y, X, ids = load_csv_data(file, sub_sample=True)
 
     # Data cleaning
     print('Handling missing values...')
@@ -123,8 +123,15 @@ def compute_criterions(y, x, weights, method):
     true_negatives = len([i for i in range(len(y)) if (predictions[i] == 0 and y[i] == 0)])
     false_negatives = len([i for i in range(len(y)) if (predictions[i] == 0 and y[i] == 1)])
 
+    real_pos = len([yi for yi in y if yi == 1])
+    real_neg = len([yi for yi in y if yi == 0])
+    true_pos_rate = true_positives / real_pos
+    true_neg_rate = true_negatives / real_neg
+    false_neg_rate = 1 - true_pos_rate
+    false_pos_rate = 1 - true_neg_rate
+
     try:
-        accuracy = (true_positives + true_negatives) / (true_positives + false_positives + true_negatives + false_negatives)
+        accuracy = (true_pos_rate + true_neg_rate) / 2 # balanced accuracy
         precision = true_positives / (true_positives + false_positives)
         recall = true_positives / (true_positives + false_negatives)
         f1_score = (2 * precision * recall) / (precision + recall)
